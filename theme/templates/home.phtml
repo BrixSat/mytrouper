@@ -8,15 +8,23 @@
 			<div class="row">
 				<div class="box col-sm-4 col-md-6">
 					<div class="thumb featured">
-						<div class="photo">
-								<img src="<?= SITE_PATH ?>res/img/search_bg.jpg" alt="" width="715" height="715">
-								<span class="info"><h3 class="no-bottom">Search Your Artiste</h3> <h6 class="text-red">www.MyTrouper.com</h6>
-										<span class="excerpt">Let's see why you need to go digital. We will study how to improve your perception and rebuild your image.</span>
-									<form class="search-container">
-									<input type="text" id="search-bar" placeholder="Search here for favourite artist">
-									<a href="#" class="search-icon"><span class="fa fa-search"></span></a>
-								  </form>
-								</span>
+						<div class="photo searchpanel" style="background-image:url('<?= SITE_PATH ?>res/img/search_bg.jpg')">
+							<span class="info"><h3 class="no-bottom">Search <span class="hidden-xs">Your </span>Artiste</h3> <h6 class="text-red">www.MyTrouper.com</h6>
+									<span class="excerpt">An online artist booking platform and a great place to showcase works online for singers and all kinds of entertainers.</span>
+								<form class="search-container">
+								<input type="text" id="search-bar" placeholder="Search here for favourite artist">
+								<a href="#" class="search-icon"><span class="fa fa-search"></span></a>
+							  </form>
+							  <div class="col-xs-9 row" style="position:absolute; bottom:0;">
+							        <div class="col-xs-6 col-sm-3 p-x-0">
+							            <iframe src="https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fmytrouper%2F&width=100&layout=button&action=like&size=small&show_faces=false&share=true&height=50&appId=279347922476477" width="100" height="50" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true"></iframe>
+                                    </div>
+                                    <div class="col-xs-6 col-sm-3">
+                                        <div class="g-follow" data-annotation="none" data-height="20" data-href="https://plus.google.com/112798600567989135542" data-rel="author"></div>
+                                    </div>
+                                    
+							  </div>
+							</span>
 						</div>
 					</div>
 				</div>
@@ -25,7 +33,7 @@
 						<div class="photo">
 							<a href="<?= SITE_PATH.'artist'?>">
 								<img src="<?= SITE_PATH ?>res/img/artist_bg.jpg" alt="" width="434" height="434">
-								<span class="info"><strong class="title">Artist</strong><span class="excerpt">A Person Who Practices One of the Fine Arts.</span><em class="arrow-right"></em></span>
+								<span class="info visible-xs"><strong class="title">Artist</strong><span class="excerpt">Find & connect of your favourite singer and artist.</span><em class="arrow-right"></em></span>
 							</a>
 						</div>
 					</div>
@@ -35,7 +43,7 @@
 						<div class="photo">
 							<a href="<?= SITE_PATH.'songs'?>">
 								<img src="<?= SITE_PATH ?>res/img/song_bg.jpg" alt="" width="434" height="434">
-								<span class="info"><strong class="title">Songs</strong><span class="excerpt">Food truck visual identity created for a scandinavian company.</span><em class="arrow-right"></em></span>
+								<span class="info  visible-xs"><strong class="title">Songs</strong><span class="excerpt">Listen to our best collection of songs.</span><em class="arrow-right"></em></span>
 							</a>
 						</div>
 					</div>
@@ -45,7 +53,7 @@
 						<div class="photo">
 							<a href="<?= SITE_PATH.'videos'?>">
 								<img src="<?= SITE_PATH ?>res/img/video_bg.jpg" alt="" width="434" height="434">
-								<span class="info"><strong class="title">Videos</strong><span class="excerpt">Suprette was one of our most appreciated projects and was featured in reddot.</span><em class="arrow-right"></em></span>
+								<span class="info visible-xs"><strong class="title">Videos</strong><span class="excerpt">Best collection of Assamese Videos Playlist.</span><em class="arrow-right"></em></span>
 							</a>
 						</div>
 					</div>
@@ -55,7 +63,7 @@
 						<div class="photo">
 							<a href="<?= SITE_PATH.''?>">
 								<img src="<?= SITE_PATH ?>res/img/event_bg.jpg" alt="" width="434" height="434">
-								<span class="info"><strong class="title">Events</strong><span class="excerpt">White hair blue eyes portrait photography.</span><em class="arrow-right"></em></span>
+								<span class="info visible-xs"><strong class="title">Events</strong><span class="excerpt">Get to know about the events near your place.</span><em class="arrow-right"></em></span>
 							</a>
 						</div>
 					</div>
@@ -77,21 +85,21 @@
 					<a href="<?=SITE_PATH?>signup" class="button filled pull-right">Join The Community</a>
 				</div>
 			</div>
+			<div class="owl-carousel owl-thumbs owl-theme">
 			<?php 
 				foreach($featured_artist as $key=>$value){
 			?>
-				<div class="owl-carousel owl-thumbs owl-theme">
 					<div class="thumb">
 						<div class="photo">
-							<a href="<?=SITE_PATH.'profile/'.$value->profile_id?>">
+							<a href="<?=SITE_PATH.'profile/'.$value->title_clean?>">
 								<img src="<?=$value->image?>" alt="" width="434" height="434">
 
 								<span class="info"><span class="big-excerpt"><?=$value->name?></span></span>
 							</a>
 						</div>
 					</div>
-				</div>
 				<?php } ?>
+			</div>
 		<?php } ?>
 		<div class="margin-4"></div>
 

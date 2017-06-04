@@ -1,0 +1,107 @@
+<?php 
+
+	$link_array = explode('/', $_SERVER['REQUEST_URI']);
+	$fun = new DatabaseFunctions();
+	$func = new functions();
+	foreach ($link_array as $value) {
+		$link_array_new[] = xss_clean_get(strip_tags(($value)));
+	}
+
+	$link_array = $link_array_new;
+	$pos = array_search('profile', $link_array);
+	$title_clean = array_slice($link_array, $pos + 1);
+	$cmd = array_slice($link_array, $pos + 2);
+	$cmd_id = array_slice($link_array, $pos + 3);
+	
+	if($title_clean[0] == ""){
+		$not_found = new not_found();
+		$not_found->handlePage();die;
+	}
+	
+	if($cmd[0] != "songs"){
+		$not_found = new not_found();
+		$not_found->handlePage();die;
+	}
+	
+	$ajax_url = SITE_PATH.'profile/'.$title_clean[0].'/'.$cmd[0];
+	if($cmd_id[0] != ""){
+		$ajax_url .= '/'.$cmd_id[0];
+	}
+	
+	$func = new functions();
+	$func->audio_player();
+	
+	$profile_obj = new profile();
+	$profile = json_decode($profile_obj->handleAction('profile', $title_clean[0]));
+?>
+<main id="content" role="main">
+	<div class="container container-masonry">
+		<div class="inner">
+		
+			<div class="row">
+				<div class="col-sm-9 songs_section">
+					
+				</div>
+				
+			<!-- artist profile start -->
+			<?php if($cmd_id[0] != ""){ ?>
+			
+		<div class="hidden">	
+			URL : <?=$ajax_url?>
+			All songs : <?=SITE_PATH.'profile/'.$title_clean[0].'/'.$cmd[0];?>
+		</div>	
+				
+					<div class="col-sm-3 post-box">
+						<div class="team-member col-xs-6 col-md-6 p-x-0">
+							<span class="team-photo no-bottom">
+								<img src="<?=$profile->image?>" width="200" height="200" alt="<?=$profile->name?> at My Trouper" titile="<?=$profile->name?> at My Trouper">
+							</span>
+						</div>
+						<div class="clear"></div>
+						<h5 class="no-bottom"><?=$profile->name?></h5>
+						<p class="no-bottom"><?=$profile->categories?></p>
+						<p class="small"><?=$profile->hometown?></p>
+						<a href="<?=SITE_PATH.'profile/'.$title_clean[0];?>" class="button filled no-bottom small">View Profile</a>
+						<div class="margin-2"></div>
+					</div>
+				
+			<?php } ?>
+			<!-- artist profile end -->
+			</div>
+			<div class="clear"></div>
+			<div class="margin-4"></div>
+		</div>
+	</div>
+</main>
+
+<script>
+	list_load('songs', '1', '<?=$cmd_id[0]?>', '<?=$title_clean[0]?>');
+	$(document).on('click', '.load_more', function(){
+		var data_page = $(this).attr('data-page');
+		var data_type = $(this).attr('data-type');
+		$('#'+data_type+'_'+data_page).hide();
+		list_load(data_type, data_page);
+	});
+	function list_load(cmd, page, cmd_id, profile){
+		$.ajax({
+			type: "POST",
+			url: "<?=$ajax_url?>?action=songsList",
+			data: {'page' : page, 'cmd' :cmd, 'cmd_id' :cmd_id, 'profile' :profile},
+			cache: false,
+			async: false,
+			success: function(data) {
+				if(page > 1){
+					$('.'+cmd+'_section').append(data);
+				}
+				else {
+					$('.'+cmd+'_section').html(data);
+				}
+			}
+		});
+	}
+</script>
+
+
+
+
+

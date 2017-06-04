@@ -65,10 +65,9 @@
 							  <span class="customUploadBtn">Upload</span>
 							</div>
 							<div class="categorybox checkbox">
-								<label class="input-group-addon"><input type="checkbox" id="tnc" name="tnc" value="1" <?php if($artist_details->tnc_agreement==1){ echo 'checked'; } ?>><i class="helper"></i>I agree to the <a href="<?=SITE_PATH.'tnc'?>" target="_blank">Terms and Conditions</a></label>
+								<label class="input-group-addon"><input type="checkbox" id="tnc" name="tnc" value="1" <?php if($artist_details->tnc_agreement==1){ echo 'checked'; } ?>><i class="helper"></i>I agree to the <a href="<?=SITE_PATH.'terms_and_conditions'?>" target="_blank">Terms and Conditions</a></label>
 							</div>
 							<div class="margin-1"></div>
-							<span><label for="name" id="artist_detail_message" style="color:red;"></label></span>
 							<input type="submit" name="details_submit" id="details_submit" value="Submit">
 						</form>
 					</div>
@@ -80,7 +79,7 @@
 							<li><a href="#Videos">Videos</a></li>
 							<li><a href="#Photos">Photos</a></li>
 						</ul>
-						<div id="Audios" class="tab_content" style="display:block">
+						<div id="Audios" class="tab_content white-background" style="display:block">
 							<form action="" id="artist_audio"  class="no-bottom" enctype="multipart/form-data">
 								<label for="name" class="sr-only">Audios</label>
 								<input type="text" class="underline" name="audio_title" id="audio_title" placeholder="Audio Description..." >
@@ -90,22 +89,22 @@
 								  <span class="customUploadBtn">Select</span>
 								</div>
 								<input type="submit" name="audio_submit" id="audio_submit" value="Submit">
-								<span><label for="name" id="artist_audio_message" style="color:red;"></label></span>
+								<h6 class="heading"><span>Your Songs</span></h6>
 							</form>
 							<div class="audio_display_list">
 							</div>
 						</div>
-						<div id="Videos" class="tab_content" style="display:none">
+						<div id="Videos" class="tab_content white-background" style="display:none">
 							<label for="name" class="sr-only">Videos</label>
 
 								<input type="text" class="underline" name="videos" id="video_link" placeholder="Your youtube link..." required="">
 								<input type="button" name="video_submit" id="video_submit" value="Submit">
-								<span><label for="name" id="artist_video_message" style="color:red;"></label></span>
+								<h6 class="heading"><span>Your Videos</span></h6>
 							<div class="video_display_list">
 
 							</div>
 						</div>
-						<div id="Photos" class="tab_content" style="display:none">
+						<div id="Photos" class="tab_content white-background" style="display:none">
 							<form action="" id="image_details"  class="no-bottom" enctype="multipart/form-data">
 								<label for="name" class="sr-only">Image Caption</label>
 								<input type="text" class="underline" name="image_caption" id="image_caption" placeholder="Image Caption..." required="" value="">
@@ -117,7 +116,7 @@
 								  <span class="customUploadBtn">Select</span>
 								</div>
 								<input type="button" name="image_submit" id="image_submit" value="Upload">
-								<span><label for="name" id="artist_image_message" style="color:red;"></label></span>
+								<h6 class="heading"><span>Your Photos</span></h6>
 							</form>
 							<section class="row image_display_list">
 
@@ -273,7 +272,6 @@
 								<span id="outstation_price_span" class="price_span" <?php if($artist_price_details->outstation != 2){ ?> style="display:none!important;" <?php } ?>><input type="text" name="outstation_price" id="outstation_price" value="<?=$artist_price_details->outstation_price?>"  maxlength="7" minlength="3"  placeholder="Outstation pricing..." class="underline" /></span>
 							</div>
 							<div class="clear margin-2"></div>
-							<span><label for="name" id="artist_price_message" style="color:red;"></label></span>
 							<input type="submit" value="Submit" name="artist_price_submit" id="artist_price_submit"/>
 						</form>
 					</div>
@@ -293,7 +291,6 @@
 							  <span class="customUploadBtn">Select</span>
 							</div>
 							<input type="submit" name="testi_submit" id="testi_submit" value="Upload">
-							<span><label for="name" id="artist_testi_message" style="color:red;"></label></span>
 						</form>
 						<ul class="testi_display_list">
 
@@ -407,36 +404,28 @@
 				},
 				success: function(data) {
 					if($.trim(data) == 1){
-						$("#artist_detail_message").show();
-						$('#artist_detail_message').html('Update Succesfully');
+						notify("success","Your profile has been updated successfully");
 						$('#cover_photo').val('');
 						$('.fileName').html('');
-						$("#artist_detail_message").fadeOut(3000);
 						<?php if($artist_details->ud_status == 2) {?>
 							location.reload();
 						<?php } ?>
 					}
 					else{
-						$("#artist_detail_message").show();
-						$('#artist_detail_message').html('Something goes wrong');
+						notify("error","Something went wrong please try again or <a href='mailto:info@mytrouper.com'>mail to us</a>");
 						$('#cover_photo').val('');
 						$('.fileName').html('');
-						$("#artist_detail_message").fadeOut(3000);
 					}
 				},
 				error: function() {
-					$("#artist_detail_message").show();
-					$('#artist_detail_message').html('Something goes wrong');
+					notify("error","Something went wrong please try again or <a href='mailto:info@mytrouper.com'>mail to us</a>");
 					$('#cover_photo').val('');
 					$('.fileName').html('');
-					$("#artist_detail_message").fadeOut(3000);
 				}
 			});
 		}
 		else {
-			$("#artist_detail_message").show();
-			$('#artist_detail_message').html('Please Accept Tearms & Conditions');
-			$("#artist_detail_message").fadeOut(3000);
+			notify("warning","Please Accept <a href='http://www.mytrouper.com/terms_and_conditions'>Terms & Conditions</a>");
 		}
 	 });
 
@@ -481,33 +470,27 @@
 			},
 			success: function(data) {
 				if($.trim(data) == 1){
-					$("#artist_testi_message").show();
-					$('#artist_testi_message').html('Testimonial added Succesfully');
+					notify("success","Your testimonial has been added to your profile");
 					list_load('testi', '1');
 					$('#testi_image').val('');
 					$('#testi_courtesy').val('');
 					$('#testimonial').val('');
 					$('.fileName').html('');
-					$("#artist_testi_message").fadeOut(3000);
 				}
 				else{
-					$("#artist_testi_message").show();
-					$('#artist_testi_message').html('Something goes wrong');
+					notify("error","Something went wrong please try again or <a href='mailto:info@mytrouper.com'>mail to us</a>");
 					$('#testi_image').val('');
 					$('#testi_courtesy').val('');
 					$('#testimonial').val('');
 					$('.fileName').html('');
-					$("#artist_testi_message").fadeOut(3000);
 				}
 			},
 			error: function() {
-				$("#artist_testi_message").show();
-				$('#artist_testi_message').html('Something goes wrong');
+				notify("error","Something went wrong please try again or <a href='mailto:info@mytrouper.com'>mail to us</a>");
 				$('#testi_image').val('');
 				$('#testi_courtesy').val('');
 				$('#testimonial').val('');
 				$('.fileName').html('');
-				$("#artist_testi_message").fadeOut(3000);
 			}
 		});
 	 });
@@ -530,20 +513,14 @@
 			},
 			success: function(data) {
 				if($.trim(data) == 1){
-					$("#artist_price_message").show();
-					$('#artist_price_message').html('Your priceing updated Succesfully');
-					$("#artist_price_message").fadeOut(3000);
+					notify("success","Your pricing has been added to your profile");
 				}
 				else{
-					$("#artist_price_message").show();
-					$('#artist_price_message').html('Something goes wrong');
-					$("#artist_price_message").fadeOut(3000);
+					notify("error","Something went wrong please try again or <a href='mailto:info@mytrouper.com'>mail to us</a>");
 				}
 			},
 			error: function() {
-				$("#artist_price_message").show();
-				$('#artist_price_message').html('Something goes wrong');
-				$("#artist_price_message").fadeOut(3000);
+				notify("error","Something went wrong please try again or <a href='mailto:info@mytrouper.com'>mail to us</a>");
 			}
 		});
 	 });
@@ -567,30 +544,24 @@
 			},
 			success: function(data) {
 				if($.trim(data) == 1){
-					$("#artist_audio_message").show();
-					$('#artist_audio_message').html('Update Succesfully');
+					notify("success","Your audio has been added to your profile");
 					list_load('audio', '1');
 					$('#audio_file').val('');
 					$('#audio_title').val('');
 					$('.fileName').html('');
-					$("#artist_audio_message").fadeOut(3000);
 				}
 				else{
-					$("#artist_audio_message").show();
-					$('#artist_audio_message').html('Something goes wrong');
+					notify("error","Something went wrong please try again or <a href='mailto:info@mytrouper.com'>mail to us</a>");
 					$('#audio_file').val('');
 					$('#audio_title').val('');
 					$('.fileName').html('');
-					$("#artist_audio_message").fadeOut(3000);
 				}
 			},
 			error: function() {
-				$("#artist_audio_message").show();
-				$('#artist_audio_message').html('Something goes wrong');
+				notify("error","Something went wrong please try again or <a href='mailto:info@mytrouper.com'>mail to us</a>");
 				$('#audio_file').val('');
 				$('#audio_title').val('');
 				$('.fileName').html('');
-				$("#artist_audio_message").fadeOut(3000);
 			}
 		});
 	 });
@@ -640,31 +611,23 @@
 				},
 				success: function(data) {
 					if($.trim(data) == 1){
-						$("#artist_video_message").show();
-						$('#artist_video_message').html('Update Succesfully');
+						notify("success","Your video has been added to your profile");
 						list_load('video', '1');
 						$('#video_link').val('');
-						$("#artist_video_message").fadeOut(3000);
 					}
 					else{
-						$("#artist_video_message").show();
-						$('#artist_video_message').html('Something goes wrong');
+						notify("error","Something went wrong please try again or <a href='mailto:info@mytrouper.com'>mail to us</a>");
 						$('#video_link').val('');
-						$("#artist_video_message").fadeOut(3000);
 					}
 				},
 				error: function() {
-					$("#artist_video_message").show();
-					$('#artist_video_message').html('Something goes wrong');
+					notify("error","Something went wrong please try again or <a href='mailto:info@mytrouper.com'>mail to us</a>");
 					$('#video_link').val('');
-					$("#artist_video_message").fadeOut(3000);
 				}
 			});
 		}
 		else {
-			$("#artist_video_message").show();
-			$('#artist_video_message').html('Please put a valid youtube url');
-			$("#artist_video_message").fadeOut(3000);
+			notify("warning","Please put valid YouTube URL. Please try again or <a href='mailto:info@mytrouper.com'>mail to us</a>");
 		}
 	});
 	list_load('image', '1');
@@ -733,16 +696,16 @@
 									$('#image').val('');
 									$('.fileName').html('');
 									list_load('image', '1');
-									$('#artist_image_message').html('Image Upload Successfully');
+									notify("success","Your photo has been added to your profile");
 								}
 							} else if (data == 0) {
-								alert('Upload Only jpeg, jpg and png file');
+								notify("warning","Upload Only jpeg, jpg and png file. Please try again or <a href='mailto:info@mytrouper.com'>mail to us</a>");
 							}
 						}
 					});
 				}
 			} else {
-				$('#artist_image_message').html('Image size can not be more than 5mb');
+				notify("warning","Image size can not be more than 5mb. Please try again or <a href='mailto:info@mytrouper.com'>mail to us</a>");
 			}
 			reader.readAsDataURL($('#image')[0].files[i]);
 		}
