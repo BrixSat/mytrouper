@@ -1,0 +1,115 @@
+<link rel="stylesheet" type="text/css" href="<?=SITE_PATH?>res/css/video-player.css" />
+<link rel="stylesheet" type="text/css" href="<?=SITE_PATH?>res/css/tooltipster.css" /><!-- tooltip -->
+<?php
+	// $videos = new videos();
+	// $videos = json_decode($videos->handleAction('videoList'));
+?>
+<main id="content" role="main">
+	<div class="container container-masonry">
+		<div class="inner">
+			<div class="row">
+				<div class="col-md-3 col-md-push-9">
+					<div class="post-box col-xs-12">
+							 <div class="margin-1"></div>
+							 <h6>Playlist</h6>
+							 <div class="sep red"></div>
+							 <div>
+								 <ul class="fa-ul">
+									<li><i class="fa-li fa fa-angle-right fa-colored"></i><a class="" href="?playlist=PLwjW2yrOZz7_PayYK3N_1ggYA8bo4wEfQ"/>New Collections</a></li>
+									<li><i class="fa-li fa fa-angle-right fa-colored"></i><a class="text-black" href="?playlist=PLwjW2yrOZz78ucLzLzTfGJ2eSCy0QGGCI"/>Old Classics</a></li>
+									<li><i class="fa-li fa fa-angle-right fa-colored"></i><a class="text-black" href=""/>Bhupen Hazarika Hits</a></li>
+									<li><i class="fa-li fa fa-angle-right fa-colored"></i><a class="text-black" href=""/>Zubeen Garg Hits</a></li>
+									<li><i class="fa-li fa fa-angle-right fa-colored"></i><a class="text-black" href=""/>Angaraag Mahanta Hits</a></li>
+								</ul>
+							</div>
+					</div>
+					<div class="clear margin-1"></div>
+					<a href="#" class="button btn-block btn-red pull-right">Join Our Artiste Group</a>
+				</div>
+
+				<div id="mainWrapper" class="col-md-9 col-md-pull-3">
+
+					<div id="playlist_list">
+							 <div id='playlist12' data-address="playlist12">
+									<!-- youtube playlist
+									data-path: playlist id
+									data-limit: number of results to retrieve (if not set, all results will be retrieved! Youtube playlist contains maximum of 200 entries.)
+									-->
+									<div class="playlistNonSelected" data-address="youtube_playlist" data-type="youtube_playlist" data-path="PLwjW2yrOZz7_PayYK3N_1ggYA8bo4wEfQ" data-limit="20" quality="small"></div>
+							 </div>
+
+					 </div>
+					 <div class="clearfix"></div>
+				</div>
+
+
+			</div>
+			<div class="clear"></div>
+			<div class="margin-4"></div>
+		</div>
+	</div>
+</main>
+<?php // NOTE: for video page only ?>
+<script type="text/javascript" src="<?=SITE_PATH?>res/js/jquery.jscrollpane.min.js"></script><!-- scroll -->
+<script type="text/javascript" src="<?=SITE_PATH?>res/js/jquery.tooltipster.js"></script><!-- tooltips -->
+<script type="text/javascript" src="<?=SITE_PATH?>res/js/video-gallery.js"></script>
+<script type="text/javascript" src="<?=SITE_PATH?>res/js/jquery.dotdotdot-1.5.1.js"></script><!-- description shortener -->
+<script type="text/javascript">
+
+var hap_player;
+jQuery(document).ready(function($) {
+
+	var vplp_settings = {
+		mediaId:'player12',
+		useDeeplink:false,
+		activePlaylist:'playlist12',
+		activeItem:0,
+
+		autoHideControls:false,
+		controlsTimeout:3000,
+		defaultVolume:0.5,
+		autoPlay:true,
+		randomPlay:true,
+		loopingOn: true,
+		autoAdvanceToNextVideo:true,
+		autoOpenDescription:false,
+		useLivePreview:true,
+
+		showControlsInAdvert:true,
+		disableSeekbarInAdvert:true,
+		showSkipButtonInAdvert:true,
+		advertSkipBtnText:'SKIP AD >',
+		advertSkipVideoText:'You can skip to video in',
+
+		contextMenuType:'custom',
+		contextMenuText:'MyTrouper.com',
+		contextMenuLink:'http://www.mytrouper.com',
+		contextMenuTarget:'_blank',
+
+		logoPath: '<?=SITE_PATH?>res/img/logo.png',
+			logoPosition: 'tr',
+			logoXOffset: 5,
+			logoYOffset: 5,
+			logoTooltipText: 'MyTrouper.com',
+			logoUrl: 'http://www.mytrouper.com',
+			logoTarget: '_blank',
+
+		aspectRatio: 2,
+		playlistOrientation:'horizontal',
+		playlistType:'list',
+		showPlaylist:true,
+		scrollType:'scroll',
+		wallPath:'<?=SITE_PATH?>res/js/',
+		ytAppId:'AIzaSyBYKuyqC5KQmFkjX45EPjXj0DBCmE320Qg',
+		useShare: true,
+		fsAppId:'<?= FB_APP_ID ?>',
+		dropdownId:'#hap_drop',
+		playlistList:'#playlist_list',
+		buttonsUrl: {thumbnailPreloaderUrl: 'data/loading.gif'},
+		autoReuseMailForDownload: true,
+		useTooltips:true
+	};
+	hap_player = $('#mainWrapper').vplp(vplp_settings);
+});
+
+	</script>

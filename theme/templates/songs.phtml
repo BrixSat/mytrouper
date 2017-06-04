@@ -1,0 +1,37 @@
+<main id="content" role="main">
+	<div class="container container-masonry">
+		<div class="inner">
+			<div class="row songs_section">
+
+			</div>
+			<div class="clear"></div>
+			<div class="margin-4"></div>
+		</div>
+	</div>
+</main>
+<script>
+	list_load('songs', '1');
+	$(document).on('click', '.load_more', function(){
+		var data_page = $(this).attr('data-page');
+		var data_type = $(this).attr('data-type');
+		$('#'+data_type+'_'+data_page).hide();
+		list_load(data_type, data_page);
+	});
+	function list_load(cmd, page){
+		$.ajax({
+			type: "POST",
+			url: "<?=SITE_PATH?>songs?action=songsList",
+			data: {'page' : page, 'cmd' :cmd},
+			cache: false,
+			async: false,
+			success: function(data) {
+				if(page > 1){
+					$('.'+cmd+'_section').append(data);
+				}
+				else {
+					$('.'+cmd+'_section').html(data);
+				}
+			}
+		});
+	}
+</script>

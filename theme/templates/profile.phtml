@@ -1,0 +1,226 @@
+<?php
+	$link_array = explode('/', $_SERVER['REQUEST_URI']);
+	$fun = new DatabaseFunctions();
+	$func = new functions();
+	foreach ($link_array as $value) {
+		$link_array_new[] = xss_clean_get(strip_tags(($value)));
+	}
+
+	$link_array = $link_array_new;
+	$pos = array_search('profile', $link_array);
+	$final_array = array_slice($link_array, $pos + 1);
+	$profile_obj = new profile();
+	$profile = json_decode($profile_obj->handleAction('profile', $final_array[0]));
+	$testimonials = json_decode($profile_obj->handleAction('testimonials', $profile->user_id));
+	if(empty($profile)){
+		$not_found = new not_found();
+		$not_found->handlePage();die;
+	}
+	if($profile->tot_audio != 0){
+		$func->audio_player();
+	}
+?>
+<main id="content" role="main" class="white-background">
+	<div class="container">
+		<div class="inner">
+			<div class="row">
+			<div class="col-sm-7">
+				<div class="team-member no-left col-xs-12 p-x-0">
+					<span class="team-photo col-xs-8 col-sm-12 p-x-0">
+						<img src="<?=$profile->image?>" width="340" height="340" alt="<?=$profile->name?> at My Trouper" titile="<?=$profile->name?> at My Trouper">
+					</span>
+					<div class="col-xs-4 hidden visible-xs text-right p-x-0">
+						<div class="margin-3"></div>
+						<iframe src="https://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.mytrouper.com<?= $_SERVER['REQUEST_URI'] ?>&width=63&layout=box_count&action=like&size=large&show_faces=false&share=true&height=65&appId=279347922476477" width="63" height="100" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true"></iframe>
+					</div>
+				</div>
+				<div class="margin-3 hidden-xs"></div>
+				<h4 class="no-bottom"><?=$profile->name?></h4>
+				<h6 class="no-bottom"><?=$profile->categories?></h6>
+				<p class="no-bottom small"><?=$profile->hometown?></p>
+				<h6>
+					<span class="rating">
+						<span class="fa fa-star-o rate"></span>
+						<span class="fa fa-star-o"></span>
+						<span class="fa fa-star-o"></span>
+						<span class="fa fa-star-o"></span>
+						<span class="fa fa-star-o"></span>
+					</span>
+				</h6>
+				<?php
+					if(md5($profile->user_id) == $_SESSION[INSTALLATION_KEY . 'user_id']){
+				?>
+					<a href="<?=SITE_PATH.'my-profile'?>" class="button filled no-bottom">Edit Profile</a>
+					<a href="#" class="button filled no-bottom">My Calender</a>
+				<?php } else { ?>
+					<a href="" class="button filled no-bottom">Book Now</a>
+				<?php } ?>
+				<div class="tab-container sep no-bottom hidden-xs hidden-sm" hidden>
+					<ul class="tabs clearlast clearfix">
+						<li class="active"><a href="#tab-4">Songs</a></li>
+						<li class=""><a href="#tab-5">Videos</a></li>
+						<li class=""><a href="#tab-6">Photos</a></li>
+						<li class=""><a href="#tab-7">Reviews</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="col-sm-5">
+				<?php if(!empty($testimonials)){ ?>
+				<div class="testimonials-vertical-offset">
+					<div class="owl-carousel owl-testimonials2 owl-red-dots owl-theme">
+						<?php
+								foreach($testimonials as $key=>$value){
+									if($value->testimonial_image != ''){
+						?>
+									<div class="testimonial-item">
+										<img src="<?=$value->testimonial_image?>"/>
+									</div>
+							<?php 	}
+									else {?>
+									<div class="testimonial-item">
+										<p><?=$value->testimonial?></p>
+										<em class="name">- <?=$value->testimonial_reference?></em>
+									</div>
+						<?php 		}
+								}
+							?>
+					</div>
+				</div>
+				<?php } ?>
+				<div class="margin-3"></div>
+			</div>
+		</div>
+		<div class="image-background-section" style="background-color: #eef4f7; background-image: url(<?=$profile->cover_photo?>)">
+
+			<div class="" style="background-image: url(<?=SITE_PATH?>res/img/bg-dots.png)">
+				<div id="eventCalendarDefault" class="calendar-horizontal">
+					<div class="margin-4"></div>
+					<div class="col-sm-8 col-sm-offset-2 transparent-bg">
+						<div class="margin-3"></div>
+						<div class='eventCalendar-list-wrap'><p class='eventCalendar-subtitle'></p>
+							<div class='eventCalendar-list-content'><ul class='eventCalendar-list'></ul></div>
+						</div>
+						<blockquote class="bio">
+
+							<p><?=$profile->bio?></p>
+						</blockquote>
+							<div class="margin-3"></div>
+					</div>
+					<div class="clear"></div>
+					<div class="margin-4"></div>
+			</div>
+
+			</div>
+	</div>
+		<div class="margin-3"></div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="tab-container vertical clearfix">
+					<ul class="tabs clearfix">
+						 <?php if($profile->tot_audio != 0){?><li <?php if($profile->tot_audio != 0){?>class="active"<?php } ?>><a href="#tab-4"  class="audio_assets">Audios</a></li><?php } ?>
+						 <?php if($profile->tot_video != 0){?><li <?php if($profile->tot_audio == 0 and $profile->tot_video != 0){?>class="active"<?php } ?>><a href="#tab-5" class="video_assets">Videos</a></li><?php } ?>
+						 <?php if($profile->tot_image != 0){?><li <?php if($profile->tot_audio == 0 and $profile->tot_video == 0 and $profile->tot_image != 0){?>class="active"<?php } ?>><a href="#tab-6" class="photo_assets">Photos</a></li><?php } ?>
+						<li class=""  style="display: none;"><a href="#tab-7">Reviews</a></li>
+					</ul>
+					<div id="tab-4" class="tab_content"  <?php if($profile->tot_audio!=0){?>style="display: block;"<?php } else{ ?>style="display: none;"<?php } ?>>
+						<h4>Audios</h4>
+						<div class="audio_section">
+
+						</div>
+					</div>
+					<div id="tab-5" class="tab_content" <?php if($profile->tot_audio == 0 and $profile->tot_video != 0){?>style="display: block;"<?php } else{ ?>style="display: none;"<?php } ?>>
+						<h4>Videos</h4>
+						<div class="col-sm-6 col-md-6 video_section">
+
+						</div>
+					</div>
+					<div id="tab-6" class="tab_content container-masonry" <?php if($profile->tot_audio == 0 and $profile->tot_video == 0 and $profile->tot_image != 0){?>style="display: block;"<?php } else{ ?>style="display: none;"<?php } ?>>
+						<!-- NOTE: gallery starts -->
+						<p><h4>Photo Gallery</h4>
+						<section class="row photo_section">
+
+						</section>
+						<!-- NOTE: gallery ends -->
+					</div>
+					<div id="tab-7" class="tab_content" style="display: none;">
+						<p><h4>Reviews</h4> <h6>
+							<span class="rating">
+								<span class="fa fa-star-o"></span>
+								<span class="fa fa-star-o"></span>
+								<span class="fa fa-star-o"></span>
+								<span class="fa fa-star-o"></span>
+								<span class="fa fa-star-o"></span>
+							</span>
+						</h6>Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Aenean lacinia bibendum nulla sed consectetur. Nulla vitae elit libero, a pharetra augue. Nulla vitae elit libero, a pharetra augue. Curabitur blandit tempus porttitor. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+		<div class="clear"></div>
+
+		<div class="margin-4"></div>
+
+	</div>
+</main>
+<script>
+	<?php if($profile->tot_audio != 0){ ?>
+		list_load('audio', '1');
+	<?php } ?>
+	<?php if($profile->tot_audio == 0 and $profile->tot_video != 0){?>
+		list_load('video', '1');
+	<?php } ?>
+	<?php if($profile->tot_audio == 0 and $profile->tot_video == 0 and $profile->tot_image != 0){?>
+		list_load('photo', '1');
+	<?php } ?>
+	$('.photo_assets').on('click', function () {
+		list_load('photo', '1');
+	});
+	$('.audio_assets').on('click', function () {
+		list_load('audio', '1');
+	});
+	$('.video_assets').on('click', function () {
+		list_load('video', '1');
+	});
+	$(document).on('click', '.load_more', function(){
+		var data_page = $(this).attr('data-page');
+		var data_type = $(this).attr('data-type');
+		$('#'+data_type+'_'+data_page).hide();
+		list_load(data_type, data_page);
+	});
+	function list_load(cmd, page){
+		$.ajax({
+			type: "POST",
+			url: "<?=SITE_PATH?>profile/<?=$final_array[0]?>?action=loadAssests",
+			data: {'user_id' : <?=$final_array[0]?>, 'page' : page, 'cmd' :cmd},
+			cache: false,
+			async: false,
+			success: function(data) {
+				if(page > 1){
+					$('.'+cmd+'_section').append(data);
+				}
+				else {
+					$('.'+cmd+'_section').html(data);
+				}
+				setGallery();
+			}
+		});
+	}
+	$(document).ready(function() {
+		$("#eventCalendarDefault").eventCalendar({
+			eventsjson: '<?=SITE_PATH?>res/json/events.json.php',
+		showDayAsWeeks: false,
+			locales: {
+				txt_next: '<i class="fa fa-arrow-right"></i>',
+				txt_prev: '<i class="fa fa-arrow-left"></i>',
+				txt_SpecificEvents_prev:"",
+				txt_SpecificEvents_after:"events:",
+				txt_noEvents: "There are no events in this period",
+				txt_NextEvents: "Next events:",
+				txt_GoToEventUrl: "See the event",
+				txt_loading: "loading..."
+			}
+		});
+		$("#eventCalendarDefault").find(".eventCalendar-list-wrap")[1].remove();
+	});
+</script>

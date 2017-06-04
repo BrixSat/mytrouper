@@ -1,0 +1,127 @@
+/*= CORE CSS */
+
+.eventCalendar-hidden {
+	display: none;
+}
+
+.eventCalendar-wrap {
+	position: relative;
+	overflow: hidden;
+}
+
+.eventCalendar-arrow {
+	position: absolute;
+	z-index: 5;
+	top: 8px;
+}
+
+.eventCalendar-prev {
+	left: 5px;
+}
+
+.eventCalendar-next {
+	right: 5px;
+}
+
+.eventCalendar-monthTitle {
+	display: block;
+	text-align: center;
+}
+
+.eventCalendar-monthWrap {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 2;
+}
+
+.eventCalendar-currentMonth {
+	z-index: 1;
+}
+
+.eventCalendar-daysList {
+	display: table;
+	width: 100%;
+	margin-top: 20px;
+	padding-left: 0;
+}
+
+.eventCalendar-showAsWeek {
+	display: block;
+}
+
+.eventCalendar-daysList li {
+	display: table-cell;
+}
+
+
+
+.eventCalendar-showAsWeek li {
+	display: block;
+	float: left;
+	width: 14.28%;
+	height: 55px;
+	margin-left: 0;
+	text-align: center;
+}
+
+.eventCalendar-daysList a {
+	padding: 0;
+	display: block;
+	text-align: center;
+	min-width: 45px;
+	line-height: 45px;
+	text-decoration: none;
+  color: #666;
+}
+
+.eventCalendar-dayWithEvents a{
+		background: #e1007a!important;
+    border-radius: 50%;
+    width: 45px;
+    margin: 0 auto;
+    text-decoration: none;
+    color: #fff;
+}
+
+.eventCalendar-current a{
+	background: #fff200!important;
+	border-radius: 50%;
+	width: 45px;
+	margin: 0 auto;
+	text-decoration: none;
+	color: #242424;
+}
+
+.eventCalendar-loading {
+	display: block;
+	min-width: 100px;
+	height: 40px;
+	line-height: 40px;
+}
+
+.eventCalendar-list {
+	position: relative;
+	z-index: 1;
+}
+
+.eventCalendar-oldEventList {
+	z-index: 2;
+}
+
+.eventCalendar-subtitle {
+	padding-left: 5px;
+	font-weight: bold;
+	font-size: 120%;
+}
+/* end of core CSS */
+.calendar-horizontal .eventCalendar-daysList a {
+	width: initial;
+	min-width: initial;
+	background: #fff;
+	border-radius: 0;
+}
+.calendar-horizontal .eventCalendar-currentMonth{width: 100%}
+.calendar-horizontal .eventCalendar-daysList li{width: 3.22%}
+.calendar-horizontal .eventCalendar-currentTitle { background: rgba(255, 255, 255, 0.9); padding: 5px;}
+.calendar-horizontal .eventCalendar-daysList{margin-top: 0;}

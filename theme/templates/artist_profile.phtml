@@ -1,0 +1,750 @@
+<?php
+	$fun = new DatabaseFunctions();
+	$func = new functions();
+	$func->audio_player();
+	$my_profile = new my_profile();
+	$artist_details = json_decode($my_profile->handleAction('artistDetails'));
+	$artist_price_details = json_decode($my_profile->handleAction('artistPriceDetails'));
+?>
+<main id="content" role="main">
+		<div class="container container-boxes">
+
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="box white-bg">
+						<h5>Personal Details</h5>
+						<form action="" id="artist_details"  class="no-bottom" enctype="multipart/form-data">
+							<div class="form-group">
+								<input type="text" class="underline" name="name" id="name" required="" value="<?=$artist_details->name?>">
+								<label for="name" class="control-label">Name</label><i class="bar"></i>
+							</div>
+							<div class="form-group">
+								<input type="email" class="underline" name="email" id="email" required="" value="<?=$artist_details->email?>">
+								<label for="email" class="control-label">Email</label><i class="bar"></i>
+							</div>
+							<div class="form-group">
+								<input type="text" class="underline" name="mobile" id="mobile" required="" value="<?=$artist_details->mobile?>" maxlength="10" minlength="10">
+								<label for="name" class="control-label">Mobile</label><i class="bar"></i>
+							</div>
+							<div class="form-group">
+								<input type="text" class="underline" name="hometown" id="hometown" required="" value="<?=$artist_details->hometown?>">
+								<label for="name" class="control-label">Hometown</label><i class="bar"></i>
+							</div>
+							<div class="form-group">
+								<input type="text" class="underline" name="language" id="language" required=""  value="<?=$artist_details->language?>">
+								<label for="name" class="control-label">Language Speak</label><i class="bar"></i>
+							</div>
+							<div class="form-group">
+								<textarea class="underline" name="bio" id="bio" cols="30" rows="4" required=""><?=$artist_details->bio?></textarea>
+								<label for="message" class="control-label">Bio</label><i class="bar"></i>
+							</div>
+							<label for="name">Choose Category</label>
+							<?php
+								$categories = $artist_details->categories;
+								$categories = explode(',', $categories);
+
+							?>
+							<div class="categorybox checkbox">
+								<?php
+									$artist_categoris = $func->artist_categoris();
+									foreach($artist_categoris as $key=>$value){
+								?>
+								<label class="input-group-addon" id="basic-addon2"><input type="checkbox" id="category_<?=$value['artist_category_id']?>" name="category[]" value="<?=$value['artist_category_id']?>"
+								<?php
+									if (in_array($value['artist_category_id'], $categories)) {
+										echo 'checked';
+									}
+								?>
+								><i class="helper"></i><?=$value['artist_category_name']?></label>
+								<?php } ?>
+							</div>
+							<label for="name">Timeline Image</label>
+							<div class="fileUpload">
+							  <span class="fileName"></span>
+							  <input id="cover_photo" type="file" name="cover_photo" class="uploadBtn" />
+							  <span class="customUploadBtn">Upload</span>
+							</div>
+							<div class="categorybox checkbox">
+								<label class="input-group-addon"><input type="checkbox" id="tnc" name="tnc" value="1" <?php if($artist_details->tnc_agreement==1){ echo 'checked'; } ?>><i class="helper"></i>I agree to the <a href="<?=SITE_PATH.'tnc'?>" target="_blank">Terms and Conditions</a></label>
+							</div>
+							<div class="margin-1"></div>
+							<span><label for="name" id="artist_detail_message" style="color:red;"></label></span>
+							<input type="submit" name="details_submit" id="details_submit" value="Submit">
+						</form>
+					</div>
+					<?php if($artist_details->ud_status == 1) {?>
+					<div class="box white-bg">
+						<div class="tab-container">
+						<ul class="tabs clearfix">
+							<li class="active"><a href="#Audios">Audios</a></li>
+							<li><a href="#Videos">Videos</a></li>
+							<li><a href="#Photos">Photos</a></li>
+						</ul>
+						<div id="Audios" class="tab_content" style="display:block">
+							<form action="" id="artist_audio"  class="no-bottom" enctype="multipart/form-data">
+								<label for="name" class="sr-only">Audios</label>
+								<input type="text" class="underline" name="audio_title" id="audio_title" placeholder="Audio Description..." >
+								<div class="fileUpload">
+								  <span class="fileName"></span>
+								  <input id="audio_file" type="file" name="audio_file" class="audio_file uploadBtn" />
+								  <span class="customUploadBtn">Select</span>
+								</div>
+								<input type="submit" name="audio_submit" id="audio_submit" value="Submit">
+								<span><label for="name" id="artist_audio_message" style="color:red;"></label></span>
+							</form>
+							<div class="audio_display_list">
+							</div>
+						</div>
+						<div id="Videos" class="tab_content" style="display:none">
+							<label for="name" class="sr-only">Videos</label>
+
+								<input type="text" class="underline" name="videos" id="video_link" placeholder="Your youtube link..." required="">
+								<input type="button" name="video_submit" id="video_submit" value="Submit">
+								<span><label for="name" id="artist_video_message" style="color:red;"></label></span>
+							<div class="video_display_list">
+
+							</div>
+						</div>
+						<div id="Photos" class="tab_content" style="display:none">
+							<form action="" id="image_details"  class="no-bottom" enctype="multipart/form-data">
+								<label for="name" class="sr-only">Image Caption</label>
+								<input type="text" class="underline" name="image_caption" id="image_caption" placeholder="Image Caption..." required="" value="">
+
+								<label for="name">Image</label>
+								<div class="fileUpload">
+								  <span class="fileName"></span>
+								  <input id="image" type="file" name="image[]" class="uploadBtn" multiple/>
+								  <span class="customUploadBtn">Select</span>
+								</div>
+								<input type="button" name="image_submit" id="image_submit" value="Upload">
+								<span><label for="name" id="artist_image_message" style="color:red;"></label></span>
+							</form>
+							<section class="row image_display_list">
+
+							</section>
+						</div>
+					</div>
+					</div>
+					<?php } ?>
+				</div>
+				<?php if($artist_details->ud_status == 1) {?>
+				<div class="col-sm-6">
+					<div class="box white-bg">
+						<h5>Price Details</h5>
+						<form name="artist_priceing_details" id="artist_price_details">
+							<div class="input-group">
+							  Pricing Type
+								<div class="form-radio input-group-addon">
+									<div class="radio">
+										<label>
+											<input type="radio" name="pricing_type" value="1" <?php if($artist_price_details->pricing_type == 1){ echo " checked='checked'"; } elseif($artist_price_details->pricing_type == "") { echo "checked='checked'"; } else{ echo "";}?> ><i class="helper"></i> Fixed
+										</label>
+						      </div>
+									<div class="radio">
+						        <label>
+											<input type="radio" name="pricing_type" value="2" <?php if($artist_price_details->pricing_type == 2){ echo " checked='checked'"; } else { echo ""; }?>><i class="helper"></i> Negotiable
+										</label>
+									</div>
+								</div>
+							</div>
+							<div class="clear margin-2"></div>
+							<label for="name" class="sr-only">Pricing</label>
+							<div class="input-group">
+								<div class="form-group">
+									<input type="text" maxlength="7" class="underline" value="<?=$artist_price_details->artist_price?>" name="pricing" id="pricing" required="" aria-describedby="basic-addon2">
+									<label for="name" class="control-label">Your pricing</label><i class="bar"></i>
+									<div class="form-radio input-group-addon" style="margin-top: -25px;">
+										<div class="radio">
+											<label>
+												<input type="radio" id="pricing-format" name="pricing_format" value="2" <?php if($artist_price_details->price_depand == 2){ echo " checked='checked'"; } else { echo ""; }?>><i class="helper"></i> per hour
+											</label>
+							      </div>
+										<div class="radio">
+							        <label>
+												<input type="radio" id="pricing-format" name="pricing_format" value="1" <?php if($artist_price_details->price_depand == 1){ echo " checked='checked'"; } elseif($artist_price_details->price_depand == "") { echo "checked='checked'"; } else{ echo "";}?>><i class="helper"></i> per song
+											</label>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="clear"></div>
+							<div class="input-group">
+							  Hands
+								<div class="form-radio input-group-addon">
+									<div class="radio">
+										<label>
+											<input type="radio" id="hands_include" name="hands" value="3" data-id="3"  data-type="hands" class="radioOption" <?php if($artist_price_details->hands == 3){ echo " checked='checked'"; } elseif($artist_price_details->hands == "") { echo "checked='checked'"; } else{ echo "";}?>><i class="helper"></i> Always Include
+										</label>
+									</div>
+									<div class="radio">
+										<label>
+											<input type="radio" id="hands_optional" name="hands" value="2" data-id="2"  data-type="hands" class="radioOption" <?php if($artist_price_details->hands == 2){ echo " checked='checked'"; } else { echo ""; }?>><i class="helper"></i> Optional
+										</label>
+									</div>
+									<div class="radio">
+										<label>
+											<input type="radio" id="hands_avail" name="hands" value="1" data-id="1" data-type="hands" class="radioOption" <?php if($artist_price_details->hands == 1){ echo " checked='checked'"; } else { echo ""; }?>><i class="helper"></i> Not Available
+										</label>
+									</div>
+								</div>
+								<span id="hands_price_span" class="price_span" <?php if($artist_price_details->hands != 2){ ?>style="display:none!important;" <?php } ?>><input type="text" name="hands_price" id="hands_price" value="<?=$artist_price_details->hands_price?>"  maxlength="7" minlength="3" placeholder="Hands pricing..." class="underline" /></span>
+							</div>
+							<div class="clear margin-2"></div>
+							<div class="input-group">
+							  Supportive Singer
+								<div class="form-radio input-group-addon">
+									<div class="radio">
+										<label>
+											<input type="radio" id="supportive_include" name="supportive" value="3" data-id="3" data-type="supportive" class="radioOption" <?php if($artist_price_details->supportive == 3){ echo " checked='checked'"; } elseif($artist_price_details->supportive == "") { echo "checked='checked'"; } else{ echo "";}?>/><i class="helper"></i> Always Include
+										</label>
+									</div>
+									<div class="radio">
+										<label>
+											<input type="radio" id="supportive_optional" name="supportive" value="2" data-id="2" data-type="supportive" class="radioOption" <?php if($artist_price_details->supportive == 2){ echo " checked='checked'"; } else { echo ""; }?>><i class="helper"></i> Optional
+										</label>
+									</div>
+									<div class="radio">
+										<label>
+											<input type="radio" id="supportive_avail" name="supportive" value="1" data-id="1" data-type="supportive" class="radioOption" <?php if($artist_price_details->supportive == 1){ echo " checked='checked'"; } else { echo ""; }?>><i class="helper"></i> Not Available
+										</label>
+									</div>
+								</div>
+								<span id="supportive_price_span" class="price_span"  <?php if($artist_price_details->supportive != 2){ ?> style="display:none!important;" <?php } ?>><input type="text" name="supportive_price" id="supportive_price" value="<?=$artist_price_details->supportive_price?>"  maxlength="7"  minlength="3"  placeholder="Supportive pricing..." class="underline" /></span>
+							</div>
+							<div class="clear margin-2"></div>
+							<div class="input-group">
+							  Transportation
+								<div class="form-radio input-group-addon">
+									<div class="radio">
+										<label>
+											<input type="radio" id="transportation_include" name="transportation" value="3" data-id="3" data-type="transportation" class="radioOption" <?php if($artist_price_details->transportation == 3){ echo " checked='checked'"; } elseif($artist_price_details->transportation == "") { echo "checked='checked'"; } else{ echo "";}?>><i class="helper"></i> Always Include
+										</label>
+									</div>
+									<div class="radio">
+										<label>
+											<input type="radio" id="transportation_optional" name="transportation" value="2" data-id="2" data-type="transportation" class="radioOption" <?php if($artist_price_details->transportation == 2){ echo " checked='checked'"; } else { echo ""; }?>><i class="helper"></i> Optional
+										</label>
+									</div>
+									<div class="radio">
+										<label>
+											<input type="radio" id="transportation_avail" name="transportation" value="1" data-id="1" data-type="transportation" class="radioOption" <?php if($artist_price_details->transportation == 1){ echo " checked='checked'"; } else { echo ""; }?>><i class="helper"></i> Not Available
+										</label>
+									</div>
+								</div>
+								<span id="transportation_price_span" class="price_span" <?php if($artist_price_details->transportation != 2){ ?> style="display:none!important;" <?php } ?>><input type="text" name="transportation_price" id="transportation_price" value="<?=$artist_price_details->transportation_price?>"  maxlength="7" minlength="3"  placeholder="Transportation pricing..." class="underline" /></span>
+							</div>
+							<div class="clear margin-2"></div>
+							<div class="input-group">
+							  Accommodation
+								<div class="form-radio input-group-addon">
+									<div class="radio">
+										<label>
+											<input type="radio" id="accommodation_include" name="accommodation"  value="3" data-id="3" data-type="accommodation" class="radioOption" <?php if($artist_price_details->accommodation == 3){ echo " checked='checked'"; } elseif($artist_price_details->accommodation == "") { echo "checked='checked'"; } else{ echo "";}?>><i class="helper"></i> Always Include
+										</label>
+									</div>
+									<div class="radio">
+										<label>
+											<input type="radio" id="accommodation_optional" name="accommodation"  value="2" data-id="2" data-type="accommodation" class="radioOption" <?php if($artist_price_details->accommodation == 2){ echo " checked='checked'"; } else { echo ""; }?>><i class="helper"></i> Optional
+										</label>
+									</div>
+									<div class="radio">
+										<label>
+											<input type="radio" id="accommodation_avail" name="accommodation"  value="1" data-id="1" data-type="accommodation" class="radioOption" <?php if($artist_price_details->accommodation == 1){ echo " checked='checked'"; } else { echo ""; }?>><i class="helper"></i> Not Available
+										</label>
+									</div>
+								</div>
+								<span id="accommodation_price_span" class="price_span" <?php if($artist_price_details->accommodation != 2){ ?> style="display:none!important;" <?php } ?>><input type="text" name="accommodation_price" id="accommodation_price" value="<?=$artist_price_details->accommodation_price?>"  maxlength="7" minlength="3"  placeholder="Accommodation pricing..." class="underline" /></span>
+							</div>
+							<div class="clear margin-2"></div>
+							<div class="input-group">
+							  Outstation
+								<div class="form-radio input-group-addon">
+									<div class="radio">
+										<label>
+											<input type="radio" id="outstation_include" name="outstation"  value="2" data-id="2" data-type="outstation" class="radioOption" <?php if($artist_price_details->outstation == 2){ echo " checked='checked'"; } else { echo ""; }?>><i class="helper"></i> Available
+										</label>
+									</div>
+									<div class="radio">
+										<label>
+											<input type="radio" id="outstation_avail" name="outstation"  value="1" data-id="1" data-type="outstation" class="radioOption" <?php if($artist_price_details->outstation == 1){ echo " checked='checked'"; } elseif($artist_price_details->outstation == "") { echo "checked='checked'"; } else{ echo "";}?>><i class="helper"></i> Not Available
+										</label>
+									</div>
+								</div>
+								<span id="outstation_price_span" class="price_span" <?php if($artist_price_details->outstation != 2){ ?> style="display:none!important;" <?php } ?>><input type="text" name="outstation_price" id="outstation_price" value="<?=$artist_price_details->outstation_price?>"  maxlength="7" minlength="3"  placeholder="Outstation pricing..." class="underline" /></span>
+							</div>
+							<div class="clear margin-2"></div>
+							<span><label for="name" id="artist_price_message" style="color:red;"></label></span>
+							<input type="submit" value="Submit" name="artist_price_submit" id="artist_price_submit"/>
+						</form>
+					</div>
+
+					<div class="box white-bg">
+						<h5>Testimonials</h5>
+						<form action="" id="testi_details"  class="no-bottom" enctype="multipart/form-data">
+							<label for="message" class="sr-only">Testimonial</label>
+							<textarea class="underline" name="testimonial" id="testimonial" cols="30" rows="4" placeholder="A brief testimonial..." required=""></textarea>
+							<label for="name" class="sr-only">Testimonial Courtesy</label>
+							<input type="text" class="underline" name="testi_courtesy" id="testi_courtesy" placeholder="Testimonial Courtesy..." required="" value="">
+
+							<label for="name">Testimonial Image</label>
+							<div class="fileUpload">
+							  <span class="fileName"></span>
+							  <input id="testi_image" type="file" name="testi_image" class="uploadBtn" />
+							  <span class="customUploadBtn">Select</span>
+							</div>
+							<input type="submit" name="testi_submit" id="testi_submit" value="Upload">
+							<span><label for="name" id="artist_testi_message" style="color:red;"></label></span>
+						</form>
+						<ul class="testi_display_list">
+
+						</ul>
+					</div>
+				</div>
+				<?php } ?>
+			</div>
+			<div class="clear"></div>
+
+			<div class="margin-4"></div>
+
+		</div>
+	</main>
+	<script>
+	//$('.price_span').hide();
+	$("#mobile").on("keypress keyup ",function(e){
+		var lengthVal = ($("#mobile").val()).length;
+		 if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57) ) {
+			 return false;
+		}
+		if (lengthVal != 10 ){
+			//$("#mobile").addClass( "err-msg" );
+		}else{
+			return false;
+		}
+	});
+	$("#pricing").on("keypress keyup ",function(e){
+		var lengthVal = ($("#pricing").val()).length;
+		 if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57) ) {
+			 return false;
+		}
+		if (lengthVal != 7 ){
+			//$("#mobile").addClass( "err-msg" );
+		}else{
+			return false;
+		}
+	});
+	$("#supportive_price").on("keypress keyup ",function(e){
+		var lengthVal = ($("#supportive_price").val()).length;
+		 if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57) ) {
+			 return false;
+		}
+		if (lengthVal != 7 ){
+			//$("#mobile").addClass( "err-msg" );
+		}else{
+			return false;
+		}
+	});
+	$("#hands_price").on("keypress keyup ",function(e){
+		var lengthVal = ($("#hands_price").val()).length;
+		 if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57) ) {
+			 return false;
+		}
+		if (lengthVal != 7 ){
+			//$("#mobile").addClass( "err-msg" );
+		}else{
+			return false;
+		}
+	});
+	$("#transportation_price").on("keypress keyup ",function(e){
+		var lengthVal = ($("#transportation_price").val()).length;
+		 if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57) ) {
+			 return false;
+		}
+		if (lengthVal != 7 ){
+			//$("#mobile").addClass( "err-msg" );
+		}else{
+			return false;
+		}
+	});
+	$("#accommodation_price").on("keypress keyup ",function(e){
+		var lengthVal = ($("#accommodation_price").val()).length;
+		 if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57) ) {
+			 return false;
+		}
+		if (lengthVal != 7 ){
+			//$("#mobile").addClass( "err-msg" );
+		}else{
+			return false;
+		}
+	});
+	$("#outstation_price").on("keypress keyup ",function(e){
+		var lengthVal = ($("#outstation_price").val()).length;
+		 if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57) ) {
+			 return false;
+		}
+		if (lengthVal != 7 ){
+			//$("#mobile").addClass( "err-msg" );
+		}else{
+			return false;
+		}
+	});
+	$('#artist_details').on('submit', function (e) {
+		e.preventDefault();
+		if ($('#tnc').prop('checked')==true){
+			var datastring = new FormData($(this)[0]);
+			$.ajax({
+				type: "POST",
+				url: "<?=SITE_PATH?>my-profile?action=artistDetailsInsert",
+				data: datastring,
+				async: false,
+				cache: false,
+				contentType: false,
+				processData: false,
+				beforeSend: function () {
+					$('#details_submit').attr('disabled', 'disabled');
+				},
+				complete: function () {
+					$('#details_submit').removeAttr('disabled');
+				},
+				success: function(data) {
+					if($.trim(data) == 1){
+						$("#artist_detail_message").show();
+						$('#artist_detail_message').html('Update Succesfully');
+						$('#cover_photo').val('');
+						$('.fileName').html('');
+						$("#artist_detail_message").fadeOut(3000);
+						<?php if($artist_details->ud_status == 2) {?>
+							location.reload();
+						<?php } ?>
+					}
+					else{
+						$("#artist_detail_message").show();
+						$('#artist_detail_message').html('Something goes wrong');
+						$('#cover_photo').val('');
+						$('.fileName').html('');
+						$("#artist_detail_message").fadeOut(3000);
+					}
+				},
+				error: function() {
+					$("#artist_detail_message").show();
+					$('#artist_detail_message').html('Something goes wrong');
+					$('#cover_photo').val('');
+					$('.fileName').html('');
+					$("#artist_detail_message").fadeOut(3000);
+				}
+			});
+		}
+		else {
+			$("#artist_detail_message").show();
+			$('#artist_detail_message').html('Please Accept Tearms & Conditions');
+			$("#artist_detail_message").fadeOut(3000);
+		}
+	 });
+
+	$(document).on('click', '.radioOption', function () {
+		var data_id = $(this).attr('data-id');
+		var data_type = $(this).attr('data-type');
+		if(data_id == 2){
+			$('#'+data_type+'_price_span').show();
+			$('#'+data_type+'_price').attr("required", "");
+		}
+		else {
+			$('#'+data_type+'_price').val('0.00');
+			$('#'+data_type+'_price_span').hide();
+			$('#'+data_type+'_price').removeAttr("required");
+
+		}
+	});
+
+	$(document).on('click', '#image_submit', function () {
+		var caption = $('#image_caption').val();
+		var countFile = $('#image')[0].files.length;
+		imageUpload(caption, countFile);
+	});
+
+
+	$('#testi_details').on('submit', function (e) {
+		e.preventDefault();
+		var datastring = new FormData($(this)[0]);
+		$.ajax({
+			type: "POST",
+			url: "<?=SITE_PATH?>my-profile?action=artistTestiInsert",
+			data: datastring,
+			async: false,
+			cache: false,
+			contentType: false,
+			processData: false,
+			beforeSend: function () {
+				$('#testi_submit').attr('disabled', 'disabled');
+			},
+			complete: function () {
+				$('#testi_submit').removeAttr('disabled');
+			},
+			success: function(data) {
+				if($.trim(data) == 1){
+					$("#artist_testi_message").show();
+					$('#artist_testi_message').html('Testimonial added Succesfully');
+					list_load('testi', '1');
+					$('#testi_image').val('');
+					$('#testi_courtesy').val('');
+					$('#testimonial').val('');
+					$('.fileName').html('');
+					$("#artist_testi_message").fadeOut(3000);
+				}
+				else{
+					$("#artist_testi_message").show();
+					$('#artist_testi_message').html('Something goes wrong');
+					$('#testi_image').val('');
+					$('#testi_courtesy').val('');
+					$('#testimonial').val('');
+					$('.fileName').html('');
+					$("#artist_testi_message").fadeOut(3000);
+				}
+			},
+			error: function() {
+				$("#artist_testi_message").show();
+				$('#artist_testi_message').html('Something goes wrong');
+				$('#testi_image').val('');
+				$('#testi_courtesy').val('');
+				$('#testimonial').val('');
+				$('.fileName').html('');
+				$("#artist_testi_message").fadeOut(3000);
+			}
+		});
+	 });
+	 $('#artist_price_details').on('submit', function (e) {
+		e.preventDefault();
+		var datastring = new FormData($(this)[0]);
+		$.ajax({
+			type: "POST",
+			url: "<?=SITE_PATH?>my-profile?action=artistPriceInsert",
+			data: datastring,
+			async: false,
+			cache: false,
+			contentType: false,
+			processData: false,
+			beforeSend: function () {
+				$('#artist_price_submit').attr('disabled', 'disabled');
+			},
+			complete: function () {
+				$('#artist_price_submit').removeAttr('disabled');
+			},
+			success: function(data) {
+				if($.trim(data) == 1){
+					$("#artist_price_message").show();
+					$('#artist_price_message').html('Your priceing updated Succesfully');
+					$("#artist_price_message").fadeOut(3000);
+				}
+				else{
+					$("#artist_price_message").show();
+					$('#artist_price_message').html('Something goes wrong');
+					$("#artist_price_message").fadeOut(3000);
+				}
+			},
+			error: function() {
+				$("#artist_price_message").show();
+				$('#artist_price_message').html('Something goes wrong');
+				$("#artist_price_message").fadeOut(3000);
+			}
+		});
+	 });
+
+	$('#artist_audio').on('submit', function (e) {
+		e.preventDefault();
+		var datastring = new FormData($(this)[0]);
+		$.ajax({
+			type: "POST",
+			url: "<?=SITE_PATH?>my-profile?action=audioUpload",
+			data: datastring,
+			async: false,
+			cache: false,
+			contentType: false,
+			processData: false,
+			beforeSend: function () {
+				$('#audio_submit').attr('disabled', 'disabled');
+			},
+			complete: function () {
+				$('#audio_submit').removeAttr('disabled');
+			},
+			success: function(data) {
+				if($.trim(data) == 1){
+					$("#artist_audio_message").show();
+					$('#artist_audio_message').html('Update Succesfully');
+					list_load('audio', '1');
+					$('#audio_file').val('');
+					$('#audio_title').val('');
+					$('.fileName').html('');
+					$("#artist_audio_message").fadeOut(3000);
+				}
+				else{
+					$("#artist_audio_message").show();
+					$('#artist_audio_message').html('Something goes wrong');
+					$('#audio_file').val('');
+					$('#audio_title').val('');
+					$('.fileName').html('');
+					$("#artist_audio_message").fadeOut(3000);
+				}
+			},
+			error: function() {
+				$("#artist_audio_message").show();
+				$('#artist_audio_message').html('Something goes wrong');
+				$('#audio_file').val('');
+				$('#audio_title').val('');
+				$('.fileName').html('');
+				$("#artist_audio_message").fadeOut(3000);
+			}
+		});
+	 });
+	$(document).on('click', '.remove_assets', function () {
+		var data_id = $(this).attr('data-id');
+		var data_type = $(this).attr('data-type');
+		$.ajax({
+			type: "POST",
+			url: "<?=SITE_PATH?>my-profile?action=deleteArtistAssests",
+			data: {'cmd' : data_type, 'data_id' : data_id},
+			cache: false,
+			async: false,
+			success: function(data) {
+				list_load(data_type, '1');
+			}
+		});
+	});
+	 $('#video_submit').on('click', function (e) {
+		e.preventDefault();
+		var vurl = $.trim($("#video_link").val());
+		vurl = $.trim(vurl);
+
+		vurl = vurl.replace("watch?v=", "embed/");
+		var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+		var match = vurl.match(regExp);
+
+		var match_url = /\b(https?):\/\/([\-A-Z0-9.]+)(\/[\-A-Z0-9+&@#\/%=~_|!:,.;]*)?(\?[A-Z0-9+&@#\/%=~_|!:,.;]*)?/i;
+		if (match_url.test(vurl)) {
+			var extracted_url = vurl.match(match_url)[0];
+			var regExp_YT = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+			var youtubeurl = extracted_url.match(regExp_YT);
+			var videoID = youtubeurl[7];
+			vurl = 'https://www.youtube.com/embed/' + videoID
+		}
+		if((match && match[2].length == 11) || vurl == ''){
+			$.ajax({
+				type: "POST",
+				url: "<?=SITE_PATH?>my-profile?action=videoUpload",
+				data: {'video_link' : vurl},
+				async: false,
+				cache: false,
+				beforeSend: function () {
+					$('#video_submit').attr('disabled', 'disabled');
+				},
+				complete: function () {
+					$('#video_submit').removeAttr('disabled');
+				},
+				success: function(data) {
+					if($.trim(data) == 1){
+						$("#artist_video_message").show();
+						$('#artist_video_message').html('Update Succesfully');
+						list_load('video', '1');
+						$('#video_link').val('');
+						$("#artist_video_message").fadeOut(3000);
+					}
+					else{
+						$("#artist_video_message").show();
+						$('#artist_video_message').html('Something goes wrong');
+						$('#video_link').val('');
+						$("#artist_video_message").fadeOut(3000);
+					}
+				},
+				error: function() {
+					$("#artist_video_message").show();
+					$('#artist_video_message').html('Something goes wrong');
+					$('#video_link').val('');
+					$("#artist_video_message").fadeOut(3000);
+				}
+			});
+		}
+		else {
+			$("#artist_video_message").show();
+			$('#artist_video_message').html('Please put a valid youtube url');
+			$("#artist_video_message").fadeOut(3000);
+		}
+	});
+	list_load('image', '1');
+	list_load('testi', '1');
+	list_load('audio', '1');
+	list_load('video', '1');
+	$(document).on('click', '.load_more', function(){
+		var data_page = $(this).attr('data-page');
+		var data_type = $(this).attr('data-type');
+		$('#'+data_type+'_'+data_page).hide();
+		list_load(data_type, data_page);
+	});
+	function list_load(cmd, page){
+		$.ajax({
+			type: "POST",
+			url: "<?=SITE_PATH?>my-profile?action=listDisplay",
+			data: {'cmd' : cmd, 'page' : page},
+			cache: false,
+			async: false,
+			success: function(data) {
+				if(page > 1){
+					$('.'+cmd+'_display_list').append(data);
+				}
+				else {
+					$('.'+cmd+'_display_list').html(data);
+				}
+			}
+		});
+	}
+
+	function imageUpload(caption, countFile) {
+		var filename = '';
+		var type = '';
+		var ftype = '';
+		var fileext = [];
+		var image_size = '';
+		for (var i = 0; i < countFile; i++) {
+			k = i;
+			var reader = new FileReader();
+			filename = $('#image')[0].files[i].name.toString();
+			type = $('#image')[0].files[i].type.toString();
+			ftype = filename.split('.').pop();
+			image_size = $('#image')[0].files[i].size;
+			if (image_size <= '5000000') {
+				reader.onload = function (e) {
+					if (e.target.result.indexOf('data:image/jpeg;base64,') != -1) {
+						fileext = '.jpg';
+					} else if (e.target.result.indexOf('data:image/png;base64,') != -1) {
+						fileext = '.png';
+					} else if (e.target.result.indexOf('data:image/jpeg;base64,') != -1) {
+						fileext = '.jpeg';
+					} else if (e.target.result.indexOf('data:image/gif;base64,') != -1) {
+						fileext = '.gif';
+					}
+
+					$.ajax({
+						type: "POST",
+						url: "<?php echo SITE_PATH . 'my-profile?action=artistImageInsert'; ?>",
+						async: true,
+						data: {Name: filename, Extention: fileext, caption: caption, op: e.target.result},
+						cache: false,
+						success: function (data) {
+							if ($.trim(data) == 1) {
+								if((countFile)==i){
+									$('#image_caption').val('');
+									$('#image').val('');
+									$('.fileName').html('');
+									list_load('image', '1');
+									$('#artist_image_message').html('Image Upload Successfully');
+								}
+							} else if (data == 0) {
+								alert('Upload Only jpeg, jpg and png file');
+							}
+						}
+					});
+				}
+			} else {
+				$('#artist_image_message').html('Image size can not be more than 5mb');
+			}
+			reader.readAsDataURL($('#image')[0].files[i]);
+		}
+	}
+	</script>

@@ -1,0 +1,175 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title><?=ucfirst(html_entity_decode(SITE_TITLE))?></title>
+<?php
+	$fun = new DatabaseFunctions();
+	$func = new functions();
+	$full_path_url = "" . $func->sanitise_server_uri($_SERVER['REQUEST_URI']);
+	$link_array = explode('/', $_SERVER['REQUEST_URI']);
+	$fun = new DatabaseFunctions();
+
+	foreach ($link_array as $value) {
+		$link_array_new[] = xss_clean_get(strip_tags(($value)));
+	}
+
+	function xss_clean_get($str) {
+		$str = preg_replace('/[^A-Za-z0-9-.@_\/]/', '', $str);
+		return $str;
+	}
+
+	$link_array = $link_array_new;
+
+?>
+<!-- Facebook Share Start -->
+	<meta property="fb:app_id" content="<?= FB_APP_ID ?>" />
+	<meta property="og:url" content="<?= $full_path_url ?>" />
+	<meta property="og:type" content="website" />
+	<meta property="og:title" content="<?=ucfirst(html_entity_decode(SITE_TITLE))?>" />
+	<meta property="og:description" content="<?=html_entity_decode(SITE_DESC)?>" />
+	<meta property="og:image" content="" />
+	<meta property="og:image:type" content="image/jpeg" />
+	<meta property="og:image:width" content="400" />
+	<meta property="og:image:height" content="300" />
+<!-- Facebook Share End -->
+
+	<meta name="keywords" content="<?=html_entity_decode(SITE_KEYWORDS)?>" />
+	<meta name="description" content="<?=html_entity_decode(SITE_DESC)?>" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<link rel="canonical" href="<?=$full_path_url?>">
+	<link rel="apple-touch-icon" sizes="180x180" href="<?= SITE_PATH ?>/res/img/favicons/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="<?= SITE_PATH ?>/res/img/favicons/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="<?= SITE_PATH ?>/res/img/favicons/favicon-16x16.png">
+	<link rel="manifest" href="<?= SITE_PATH ?>/res/img/favicons/manifest.json">
+	<link rel="mask-icon" href="<?= SITE_PATH ?>/res/img/favicons/safari-pinned-tab.svg" color="#5bbad5">
+	<meta name="theme-color" content="#ffffff">
+	<link href="https://fonts.googleapis.com/css?family=Roboto:400,700%7CDroid+Serif" rel="stylesheet" type="text/css">
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+	<link href="<?= SITE_PATH ?>res/css/combine-style.min.css" rel="stylesheet" type="text/css">
+	<script type="text/javascript" src="<?= SITE_PATH ?>res/js/jquery.min.js"></script>
+	<script type="text/javascript" src="<?= SITE_PATH ?>res/js/site.js"></script>
+</head>
+<body>
+	<header id="top" class="navbar" role="banner">
+		<div class="container">
+			<div class="inner">
+
+				<div class="site-title">
+					<h1><a href="index.html"><img src="<?=SITE_PATH?>res/img/logo.png" width="100" height="52" alt="Exa"></a><a id="bookmark-this" href="#" title="Bookmark MyTrouper"><i class="fa fa-heart ld ld-heartbeat text-red" alt="bookmark" title="Bookmark MyTrouper"></i></a></h1>
+					<a href="#site-menu" class="site-menu-toggle">
+						<span class="sr-only">Toggle navigation</span>
+						<em class="first"></em><em class="middle"></em><em class="last"></em>
+					</a>
+				</div>
+
+				<div id="site-menu">
+					<nav>
+						<ul>
+							<li
+							<?php
+								if (in_array('index', $link_array)) {
+							?>
+								class="current-menu-item"
+							<?php
+								}
+								elseif (end($link_array)=="") {
+							?>
+								class="current-menu-item"
+							<?php
+								}
+							?>><a href="<?= SITE_PATH ?>">Home</a></li>
+
+							<li
+							<?php
+							$class_artist = "";
+								if (in_array('artist', $link_array)) {
+									$class_artist = "current-menu-item";
+								}
+							?>
+							class="menu-item-has-children <?=$class_artist?>">
+								<a href="<?= SITE_PATH ?>artist/">Artist</a>
+								<ul>
+									<?php
+										$artist_categoris = $func->artist_categoris();
+										foreach($artist_categoris as $key=>$value){
+											$category_where = " and find_in_set('".$value['artist_category_id']."',ad.categories) <> 0";
+											$query_artist = "select artist_id
+															from artist_details as ad
+															join user_details as ud
+																on ad.user_id = ud.user_id
+															where
+																ud.status = ?";
+											$query_artist .= $category_where;
+											$query_val = array('1');
+											$result = $fun->SelectFromTable($query_artist, $query_val);
+											if(!empty($result)){
+									?>
+										<li><a href="<?= SITE_PATH ?>artist/<?=$func->url_slug($value['artist_category_name'])?>"><?=$value['artist_category_name']?></a></li>
+											<?php } } ?>
+								</ul>
+							</li>
+							<?php
+							$class_song = "";
+								if (in_array('songs', $link_array)) {
+									$class_song = "current-menu-item";
+								}
+							?>
+							<li class="menu-item-has-children <?=$class_song?>">
+								<a href="<?= SITE_PATH ?>songs">Songs</a>
+							</li>
+							<?php
+							$class_videos = "";
+								if (in_array('videos', $link_array)) {
+									$class_videos = "current-menu-item";
+								}
+							?>
+							<li class="menu-item-has-children <?=$class_videos?>"><a href="<?= SITE_PATH ?>videos">Videos</a></li>
+							<?php
+							$class_contact = "";
+								if (in_array('contact', $link_array)) {
+									$class_contact = "current-menu-item";
+								}
+							?>
+							<li class="menu-item-has-children <?=$class_contact?>">
+								<a href="<?= SITE_PATH ?>contact">Contact</a>
+							</li>
+							<?php
+							$class_log = "";
+								if (in_array('my-profile', $link_array)) {
+									$class_log = "current-menu-item";
+								}
+								elseif (in_array('signup', $link_array)) {
+									$class_log = "current-menu-item";
+								}
+							?>
+							<li class="menu-item-has-children <?=$class_log?>">
+								<?php
+									if(!empty($_SESSION['eeeprofile_id'])){
+								?>
+									<a href="<?=SITE_PATH?>my-profile">Profile</a>
+								<?php
+									}
+									else {
+								?>
+									<a href="<?=SITE_PATH?>signup">Login | Signup</a>
+								<?php
+									}
+								?>
+								<?php
+									if(!empty($_SESSION['eeeprofile_id'])){
+								?>
+								<ul>
+									<li>
+										<a href="<?=SITE_PATH?>my-profile">My Profile</a>
+										<a href="<?=SITE_PATH?>logout">Logout</a>
+									</li>
+								</ul>
+								<?php } ?>
+							</li>
+						</ul>
+					</nav>
+				</div>
+
+			</div>
+		</div>
+	</header>

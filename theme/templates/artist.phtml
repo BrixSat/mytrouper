@@ -1,0 +1,52 @@
+	<?php 
+		$link_array = explode('/', $_SERVER['REQUEST_URI']);
+		$fun = new DatabaseFunctions();
+
+		foreach ($link_array as $value) {
+			$link_array_new[] = xss_clean_get(strip_tags(($value)));
+		}
+
+		$link_array = $link_array_new;
+		$pos = array_search('artist', $link_array);
+		$final_array = array_slice($link_array, $pos + 1);
+		
+	?>
+	<main id="content" role="main">
+		<div class="container container-masonry">
+			<div class="inner">
+				<div class="row artist_section">
+					
+				</div>
+			</div>
+			<div class="clear"></div>
+
+			<div class="margin-4"></div>
+
+		</div>
+	</main>
+	<script>
+		list_load('artist', '1');
+		$(document).on('click', '.load_more', function(){
+			var data_page = $(this).attr('data-page');
+			var data_type = $(this).attr('data-type');
+			$('#'+data_type+'_'+data_page).hide();
+			list_load(data_type, data_page);
+		});
+		function list_load(cmd, page){
+			$.ajax({
+				type: "POST",
+				url: "<?=SITE_PATH?>artist?action=artistsList",
+				data: {'page' : page, 'category' :'<?=$final_array[0]?>'},
+				cache: false,
+				async: false,
+				success: function(data) {
+					if(page > 1){
+						$('.'+cmd+'_section').append(data);
+					}
+					else {
+						$('.'+cmd+'_section').html(data);
+					}
+				}
+			});
+		}
+	</script>

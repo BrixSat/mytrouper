@@ -1,0 +1,99 @@
+<?php 
+	$index_obj = new index();
+	$featured_artist = json_decode($index_obj->featured_artist());
+?>
+<main id="content" role="main">
+	<div class="container container-masonry">
+		<div class="inner">
+			<div class="row">
+				<div class="box col-sm-4 col-md-6">
+					<div class="thumb featured">
+						<div class="photo">
+								<img src="<?= SITE_PATH ?>res/img/search_bg.jpg" alt="" width="715" height="715">
+								<span class="info"><h3 class="no-bottom">Search Your Artiste</h3> <h6 class="text-red">www.MyTrouper.com</h6>
+										<span class="excerpt">Let's see why you need to go digital. We will study how to improve your perception and rebuild your image.</span>
+									<form class="search-container">
+									<input type="text" id="search-bar" placeholder="Search here for favourite artist">
+									<a href="#" class="search-icon"><span class="fa fa-search"></span></a>
+								  </form>
+								</span>
+						</div>
+					</div>
+				</div>
+				<div class="box col-xs-6 col-sm-4 col-md-3">
+					<div class="thumb">
+						<div class="photo">
+							<a href="<?= SITE_PATH.'artist'?>">
+								<img src="<?= SITE_PATH ?>res/img/artist_bg.jpg" alt="" width="434" height="434">
+								<span class="info"><strong class="title">Artist</strong><span class="excerpt">A Person Who Practices One of the Fine Arts.</span><em class="arrow-right"></em></span>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="box col-xs-6 col-sm-4 col-md-3">
+					<div class="thumb">
+						<div class="photo">
+							<a href="<?= SITE_PATH.'songs'?>">
+								<img src="<?= SITE_PATH ?>res/img/song_bg.jpg" alt="" width="434" height="434">
+								<span class="info"><strong class="title">Songs</strong><span class="excerpt">Food truck visual identity created for a scandinavian company.</span><em class="arrow-right"></em></span>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="box col-xs-6 col-sm-4 col-md-3">
+					<div class="thumb">
+						<div class="photo">
+							<a href="<?= SITE_PATH.'videos'?>">
+								<img src="<?= SITE_PATH ?>res/img/video_bg.jpg" alt="" width="434" height="434">
+								<span class="info"><strong class="title">Videos</strong><span class="excerpt">Suprette was one of our most appreciated projects and was featured in reddot.</span><em class="arrow-right"></em></span>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="box col-xs-6 col-sm-4 col-md-3">
+					<div class="thumb">
+						<div class="photo">
+							<a href="<?= SITE_PATH.''?>">
+								<img src="<?= SITE_PATH ?>res/img/event_bg.jpg" alt="" width="434" height="434">
+								<span class="info"><strong class="title">Events</strong><span class="excerpt">White hair blue eyes portrait photography.</span><em class="arrow-right"></em></span>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="clear"></div>
+
+		<div class="margin-1"></div>
+		<?php 
+			if(!empty($featured_artist)){
+		?>
+			<div class="row">
+				<div class="box col-xs-6 col-sm-8 col-md-9">
+					<h6>Artist</h6>
+					<div class="sep red margin-1"></div>
+				</div>
+				<div class="box col-xs-6 col-sm-4 col-md-3">
+					<a href="<?=SITE_PATH?>signup" class="button filled pull-right">Join The Community</a>
+				</div>
+			</div>
+			<?php 
+				foreach($featured_artist as $key=>$value){
+			?>
+				<div class="owl-carousel owl-thumbs owl-theme">
+					<div class="thumb">
+						<div class="photo">
+							<a href="<?=SITE_PATH.'profile/'.$value->profile_id?>">
+								<img src="<?=$value->image?>" alt="" width="434" height="434">
+
+								<span class="info"><span class="big-excerpt"><?=$value->name?></span></span>
+							</a>
+						</div>
+					</div>
+				</div>
+				<?php } ?>
+		<?php } ?>
+		<div class="margin-4"></div>
+
+	</div>
+</main>
