@@ -2,28 +2,32 @@
 		<div class="container container-boxes">
 			<div class="row">
 				<div class="col-sm-6">
-					<div class="box white-bg" style="background-image:url(<?=SITE_PATH?>res/img/contact.jpg)">
-						<h2>Artist Login</h2>
+					<div class="box white-bg" style="background-image:url(<?=SITE_PATH?>res/img/artist_bg.jpg)">
+						<h3>Artist Login</h3>
 						<div class="sep red"></div>
-						<p>Please use social login. <br>
-							<a href="<?=SITE_PATH?>/theme/modules/login-with-facebook/fbconfig.php" class="button filled pull-right">Facebook Login</a>
-						</p>
-						<!--<div class="fb-login-button" data-max-rows="1" data-size="large" data-show-faces="true" data-auto-logout-link="true"></div>
-						<div id="fb-root"></div>
-						<script>(function(d, s, id) {
-						  var js, fjs = d.getElementsByTagName(s)[0];
-						  if (d.getElementById(id)) return;
-						  js = d.createElement(s); js.id = id;
-						  js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.8&appId=<?=FB_APP_ID?>";
-						  fjs.parentNode.insertBefore(js, fjs);
-						}(document, 'script', 'facebook-jssdk'));</script>-->
-						<a href="#">Need Help?</a>
+						<p>Please use social login. </p>
+						<div class="row">
+						    <div class="col-xs-6 col-md-4">
+						        <a href="<?=ACTION_URL?>" class="button filled col-xs-12" style="background:#3b5998; border:0"><i class="fa fa-facebook"></i> Facebook</a>
+						    </div>
+						    <div class="col-xs-6 col-md-4">
+						        <a href="<?=GOOGLE_ACTION_URI?>" class="button filled col-xs-12" style="background:#dd4b39; border:0"><i class="fa fa-google-plus"></i> Google +</a>
+						    </div>
+						    <div class="col-xs-6 col-md-4">
+						        <a href="<?=TWITTER_ACTION_URI?>" class="button filled col-xs-12" style="background:#1da1f2; border:0"><i class="fa fa-twitter"></i> Twitter</a>
+						    </div>
+							
+						</div>
+						
+						<a href="mailto:info@mytrouper.com">Need Help?</a>
+						<div class="margin-5"></div>
+						<div class="margin-5"></div>
 					</div>
 				</div>
 
 				<div class="col-sm-6">
 					<div class="box white-bg">
-						<h2>Committee Login</h2>
+						<h3>Committee Login</h3>
 						<div class="sep red"></div>
 						<div class="margin-1"></div>
 						<form action="contact1.html" class="no-bottom">

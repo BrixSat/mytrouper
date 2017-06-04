@@ -19,16 +19,13 @@ class artist extends template {
     }
 
     public function showHomePage() {
-        $title = parent::getPageTitle();
-        $keyword = parent::getSeoKeyword();
-        $desc = parent::getSeoDescription();
         $head = new header('artist');
         echo $head->getHeader();
         $index_temp = parent::getTemplate();
         $foot = new footer();
         echo $foot->getFooter();
     }
-
+	
 	public function handleAction($action, $category = '', $filter = '', $page = '',  $action_type=''){
 		switch ($action) {
 			case 'artistsList': {
@@ -46,7 +43,7 @@ class artist extends template {
 				}
 		}
 	}
-
+	
 	private function artists_list($categories='', $page = '', $action_type = ''){
 		$fun = new DatabaseFunctions();
         $func = new functions();
@@ -69,13 +66,17 @@ class artist extends template {
             $getPage = 1;
         }
         $pageNumber = $getPage - 1;
-        $limit = " LIMIT " . $pageNumber * 7 . " , " . 7;
-		$query_artist = "select
+        $limit = " LIMIT " . $pageNumber * 6 . " , " . 6;
+		$query_artist = "select 
 						ad.artist_id,
 						ad.name,
+						ad.twitter_screen_name,
+						ad.title_clean,
 						ud.user_id,
 						ud.profile_id,
 						ud.facebook_id,
+						ud.twitter_id,
+						ud.gplus_id,
 						ad.categories
 						from artist_details as ad
 						join user_details as ud
@@ -97,12 +98,22 @@ class artist extends template {
 					$categories_array[] = $result_cat[0]['artist_category_name'];
 				}
 				$result[$key]['categories'] = implode(', ', $categories_array);
+				$image_path = "";
 				if($value['facebook_id'] != ""){
 					$image_path =  "https://graph.facebook.com/".$value['facebook_id']."/picture?type=large&width=434&height=434";
 				}
+				elseif($value['gplus_id'] != ""){
+					$image_path = $func->google_image($value['gplus_id']);
+				}
+				elseif($value['twitter_id'] != ""){
+					$image_path = "https://twitter.com/".$value['twitter_screen_name']."/profile_image?size=original";
+				}
+				if($image_path == ""){
+					$image_path = SITE_PATH.'res/img/default_profile_pic.png';
+				}
 				$result[$key]['image'] = $image_path;
 			}
-
+			
 		$result =  json_encode($result);
 		if(empty($result)){
 			$result = array();
@@ -113,14 +124,15 @@ class artist extends template {
 		else {
 			$artist = json_decode($result);
 			if(!empty($artist)){
+				shuffle($artist);
 				foreach($artist as $key=>$value){
 			?>
 					<div class="box col-sm-6">
 						<div class="post-box horizontal artist clearfix">
-							<a href="<?=SITE_PATH.'profile/'.$value->profile_id?>" class="image-link arrow-icon col-xs-5" style="padding-left=0">
+							<a href="<?=SITE_PATH.'profile/'.$value->title_clean?>" class="image-link arrow-icon col-xs-5" style="padding-left:0">
 								<img src="<?=$value->image?>" alt="<?=$value->name?> at mytrouper.com"></a>
 							<div class="extra-info">
-								<p class="no-bottom">
+								<p class="no-bottom hidden-xs">
 									<span class="rating">
 										<span class="fa fa-star-o rate"></span>
 										<span class="fa fa-star-o"></span>
@@ -130,28 +142,28 @@ class artist extends template {
 									</span>
 								</p>
 								<h6 class="meta no-bottom small"><?=$value->categories?></h6>
-								<h5><a href="<?=SITE_PATH.'profile/'.$value->profile_id?>"><?=$value->name?></a></h5>
-								<?php
+								<h5><a href="<?=SITE_PATH.'profile/'.$value->title_clean?>"><?=$value->name?></a></h5>
+								<?php 
 									if(md5($value->user_id) == $_SESSION[INSTALLATION_KEY . 'user_id']){
 								?>
-									<a href="<?=SITE_PATH.'profile/'.$value->profile_id?>" class="button small filled no-bottom book-btn">You</a>
+									<a href="<?=SITE_PATH.'profile/'.$value->title_clean?>" class="button small filled no-bottom book-btn">You</a>
 								<?php
 									}
 									else {
 								?>
 									<a href="<?=SITE_PATH.'profile/'.$value->profile_id?>" class="button small filled no-bottom book-btn">Book<span class="hidden-xs"> Now</span></a>
-								<?php
+								<?php								
 									}
 								?>
-
+								
 							</div>
 						</div>
 					</div>
-			<?php
+			<?php 	
 					if($key == 5){
 					  break;
 					}
-				}
+				} 
 			}
 			else {
 				?>
@@ -160,13 +172,13 @@ class artist extends template {
 					</div>
 				<?php
 			}
-			if(count($artist)>6){
+			if(count($artist)>5){
 			?>
 			<div class="box col-sm-12 text-center" id="artist_<?=($getPage+1)?>">
 				<a class="button color no-bottom load_more" data-type="artist" data-page="<?=($getPage+1)?>">Load More Artist</a>
 			</div>
 			<?php } ?>
 		<?php
-		}
+		}											
 	}
 }

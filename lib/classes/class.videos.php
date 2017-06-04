@@ -14,9 +14,6 @@ class videos extends template {
     }
 
     public function showHomePage() {
-        $title = parent::getPageTitle();
-        $keyword = parent::getSeoKeyword();
-        $desc = parent::getSeoDescription();
         $head = new header('videos');
         echo $head->getHeader();
         $index_temp = parent::getTemplate();

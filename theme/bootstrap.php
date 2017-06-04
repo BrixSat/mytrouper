@@ -3,13 +3,13 @@
 class bootstrap {
 
     function __construct() {
-
+		
         $link = isset($_SERVER['REDIRECT_URL']) ? rtrim($_SERVER['REDIRECT_URL'], '/') : '';
         $link_array = explode('/', $link);
 
         $fun = new DatabaseFunctions();
         $func = new functions();
-
+        
         foreach ($link_array as $value) {
             $link_array_new[] = $func->xss_clean_get(strip_tags(($value)));
         }
@@ -30,14 +30,14 @@ class bootstrap {
         }
 
         $_SERVER['REQUEST_URI'] = $func->xss_clean_get($_SERVER['REQUEST_URI']);
-
+		
         $link_array = $link_array_new;
         $route = end($link_array);
 		if(SITE_MAINTENANCE == 0){
 			if ($route == 'index' || $route == '') {
 				$home = new index();
 				$home->handlePage();
-			}
+			} 
 			elseif (in_array('artist', $link_array)) {
 				$end_artist = end($link_array);
 				$artist_categoris = $func->artist_categoris();
@@ -52,21 +52,33 @@ class bootstrap {
 					$not_found = new not_found();
 					$not_found->handlePage();
 				}
-			}
+			} 
 			elseif (in_array('profile', $link_array)) {
 				$final_array = array_slice($link_array, $pos + 1, 2);
 				$link_count =  (count($link_array)-2);
 				$action_array = $link_array[$link_count];
 				$end_profile_val = end($link_array);
-				if(is_numeric($end_profile_val) and $action_array == "profile"){
-					$profile = new profile();
-					$profile->handlePage();
+				if($action_array == "profile"){
+					$profile = new profile($action_array);
+					$profile->handlePage($action_array);
+				}
+				elseif(in_array('photos', $link_array)){
+					// $profile = new profile($action_array);
+					// $profile->handlePage($action_array);
+				}
+				elseif(in_array('songs', $link_array)){
+					$profile_songs = new profile('artist_songs');
+					$profile_songs->handlePage('artist_songs');
+				}
+				elseif(in_array('videos', $link_array)){
+					// $profile = new profile($action_array);
+					// $profile->handlePage($action_array);
 				}
 				else {
 					$not_found = new not_found();
 					$not_found->handlePage();
 				}
-			}
+			} 
 			elseif ($route == 'my-profile') {
 				if(!empty($_SESSION['eeeprofile_id'])){
 					if($_SESSION['eeeuser_type'] == 1){
@@ -81,7 +93,7 @@ class bootstrap {
 				else {
 					header("Location: " . SITE_PATH);
 				}
-			}
+			} 
 			elseif ($route == 'songs') {
 				$end_songs = end($link_array);
 				if ($end_songs == 'songs') {
@@ -92,7 +104,7 @@ class bootstrap {
 					$not_found = new not_found();
 					$not_found->handlePage();
 				}
-			}
+			}  
 			elseif ($route == 'videos') {
 				$end_videos = end($link_array);
 				if ($end_videos == 'videos') {
@@ -103,14 +115,14 @@ class bootstrap {
 					$not_found = new not_found();
 					$not_found->handlePage();
 				}
-			}
-			elseif ($route == 'contact' OR $route == 'tnc') {
+			} 
+			elseif ($route == 'contact' OR $route == 'terms_and_conditions' OR $route == 'book_artist') {
 				$static_page = new static_page($route);
 				$static_page->handlePage($route);
-			}
+			} 
 			elseif ($route == 'logout') {
 				$logout = new logout();
-			}
+			} 
 			elseif ($route == 'signup') {
 				if(!empty($_SESSION['eeeprofile_id'])){
 					header("Location: " . SITE_PATH);
@@ -119,7 +131,7 @@ class bootstrap {
 					$signup = new signup();
 					$signup->handlePage();
 				}
-			}
+			} 
 			else {
 				$not_found = new not_found();
 				$not_found->handlePage();
@@ -134,3 +146,4 @@ class bootstrap {
 
 $boot = new bootstrap();
 ?>
+

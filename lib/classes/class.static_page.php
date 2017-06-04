@@ -14,9 +14,6 @@ class static_page extends template {
     }
 
     public function showHomePage($page) {
-        $title = parent::getPageTitle();
-        $keyword = parent::getSeoKeyword();
-        $desc = parent::getSeoDescription();
         $head = new header($page);
         echo $head->getHeader();
         $index_temp = parent::getTemplate();

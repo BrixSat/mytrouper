@@ -49,7 +49,7 @@ if (isset($session)) {
     $femail = $graphObject->getProperty('email');    // To Get Facebook email ID
 
    
-    $query = "select user_id, profile_id, facebook_id, user_type, status from user_details where `facebook_id` = ?";
+    $query = "select user_id, profile_id, gplus_id, facebook_id, user_type, status from user_details where `facebook_id` = ?";
     $query_val = array($fbid);
     $result = $fun->SelectFromTable($query, $query_val);
 	
@@ -59,6 +59,7 @@ if (isset($session)) {
 			$_SESSION[INSTALLATION_KEY . 'user_id'] = md5($result[0]['user_id']);
 			$_SESSION[INSTALLATION_KEY . 'profile_id'] = $result[0]['profile_id'];
 			$_SESSION[INSTALLATION_KEY . 'facebook_id'] = $result[0]['facebook_id'];
+			$_SESSION[INSTALLATION_KEY . 'gplus_id'] = $result[0]['gplus_id'];
 			$_SESSION[INSTALLATION_KEY . 'user_type'] = $result[0]['user_type'];
 			$_SESSION[INSTALLATION_KEY . 'status'] = $result[0]['status'];
 			header("Location: " . SITE_PATH.'my-profile');
@@ -80,7 +81,7 @@ if (isset($session)) {
 		);
 		$id = $fun->InsertToTable('user_details', $insert);
 		if($id){
-			$query = "select user_id, profile_id, facebook_id, user_type, status from user_details where `facebook_id` = ?";
+			$query = "select user_id, profile_id, gplus_id, facebook_id, user_type, status from user_details where `facebook_id` = ?";
 			$query_val = array($fbid);
 			$result = $fun->SelectFromTable($query, $query_val);
 			if(!empty($result)){
@@ -95,6 +96,7 @@ if (isset($session)) {
 					$_SESSION[INSTALLATION_KEY . 'user_id'] = md5($result[0]['user_id']);
 					$_SESSION[INSTALLATION_KEY . 'profile_id'] = $result[0]['profile_id'];
 					$_SESSION[INSTALLATION_KEY . 'facebook_id'] = $result[0]['facebook_id'];
+					$_SESSION[INSTALLATION_KEY . 'gplus_id'] = $result[0]['gplus_id'];
 					$_SESSION[INSTALLATION_KEY . 'user_type'] = $result[0]['user_type'];
 					$_SESSION[INSTALLATION_KEY . 'status'] = $result[0]['status'];
 					header("Location: " . SITE_PATH.'my-profile');

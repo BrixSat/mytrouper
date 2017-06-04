@@ -7,33 +7,26 @@ class my_profile extends template {
     function __construct($template_page) {
         parent::setTemplate($template_page);
     }
-
+	
 
     public function handlePage($template_page) {
 		if($_GET['action'] !=""){
 			$this->handleAction($_GET['action']);
 		}
 		else {
-      //echo "string111";
 			echo $this->showHomePage($template_page);
-
 		}
     }
-
+	
     private function showHomePage($template_page) {
-        $title = parent::getPageTitle();
-        $keyword = parent::getSeoKeyword();
-        $desc = parent::getSeoDescription();
         $head = new header($template_page);
         echo $head->getHeader();
         $index_temp = parent::getTemplate();
         $foot = new footer();
         echo $foot->getFooter();
     }
-
+	
 	public function handleAction($action, $action_type=''){
-    echo "string";
-    die;
 		switch ($action) {
 			case 'artistDetails': {
 					$return = $this->artist_details();
@@ -139,11 +132,11 @@ class my_profile extends template {
 				}
 		}
 	}
-
+	
 	private function artist_details(){
 		$fun = new DatabaseFunctions();
         $func = new functions();
-		$query = "select
+		$query = "select 
 						ad.artist_id,
 						ad.name,
 						ad.email,
@@ -165,7 +158,7 @@ class my_profile extends template {
 		$result = $fun->SelectFromTable($query, $query_val);
 		return $result =  json_encode($result[0]);
 	}
-
+	
 	private function artistDetailsInsert(){
 		$fun = new DatabaseFunctions();
         $func = new functions();
@@ -184,9 +177,21 @@ class my_profile extends template {
 				unlink($unlink_file);
 			}
 		}
-
-		$query = "UPDATE artist_details SET name = ?, email = ?, mobile = ? , hometown = ? , language = ?, bio = ? , tnc_agreement = ?, categories = ? ".$upload_file." WHERE  md5(user_id) = ? ";
-		$val_artist = array('name' => $fun->EscapeString($_REQUEST['name']), 'email' =>$fun->EscapeString($_REQUEST['email']), 'mobile' =>$fun->EscapeString($_REQUEST['mobile']), 'hometown' =>$fun->EscapeString($_REQUEST['hometown']), 'language' =>$_REQUEST['language'], 'bio' =>$_REQUEST['bio'], 'categories' =>$categories, 'tnc_agreement' =>$_REQUEST['tnc'], 'user_id' =>$fun->EscapeString($_SESSION[INSTALLATION_KEY . 'user_id']));
+		$title_clean_insert = "";
+		if($_SESSION[INSTALLATION_KEY . 'status'] == 2){
+			$title_clean = $func->url_slug($_REQUEST['name']);
+			$query_title = "select title_clean from artist_details where `title_clean` = ?";
+			$query_val_title = array($title_clean);
+			$result_title = $fun->SelectFromTable($query_title, $query_val_title);
+			if(!empty($result_title)){
+				$title_clean = $title_clean.rand(1,99);
+			}
+			$title_clean_insert = " , title_clean = '".$title_clean."'";
+		}
+		
+		$query = "UPDATE artist_details SET name = ?, email = ?, mobile = ? , hometown = ? , language = ?, bio = ? , tnc_agreement = ?, categories = ? ".$upload_file." ".$title_clean_insert." WHERE  md5(user_id) = ? ";
+		
+		$val_artist = array('name' => $fun->EscapeString($_REQUEST['name']), 'email' =>$fun->EscapeString($_REQUEST['email']), 'mobile' =>$fun->EscapeString($_REQUEST['mobile']), 'hometown' =>$fun->EscapeString($_REQUEST['hometown']), 'language' =>$_REQUEST['language'], 'bio' =>$_REQUEST['bio'], 'tnc_agreement' =>$_REQUEST['tnc'], 'categories' =>$categories, 'user_id' =>$fun->EscapeString($_SESSION[INSTALLATION_KEY . 'user_id']));
 		$res = $fun->DatabaseQuery($query, $val_artist);
 		if($res){
 			$query1 = "UPDATE user_details SET status = 1 WHERE  md5(user_id) = '".$_SESSION[INSTALLATION_KEY . 'user_id']."'";
@@ -197,9 +202,9 @@ class my_profile extends template {
 			echo 0;
 		}
 	}
-
-
-
+	
+	
+	
 	private function artist_image_insert(){
         try {
 			ini_set('memory_limit', '512M');
@@ -276,12 +281,12 @@ class my_profile extends template {
 
 					$filenamefordb = $file_name;
                     $file_name = UPLOAD_DIR . $file_name;
-
+					
                 } else {
                     echo 'An error occurred.';
                     die;
                 }
-            }
+            } 
 
             $fun = new DatabaseFunctions();
             $file_path = $file_name;
@@ -295,7 +300,7 @@ class my_profile extends template {
                 'image_caption' => $caption,
                 'user_id' => $result[0]['user_id']
             );
-
+           
             $id = $fun->InsertToTable('images', $image_upload);
 
             if ($id) {
@@ -308,16 +313,16 @@ class my_profile extends template {
             echo $ex->getMessage();
         }
 	}
-
+	
 	private function artist_testi_insert(){
 		$fun = new DatabaseFunctions();
         $func = new functions();
 		$uploaddir = 'res/uploads/image/';
-
+		
 		$query = "select user_id from user_details where md5(user_id) = ?";
 		$query_val = array($_SESSION[INSTALLATION_KEY . 'user_id']);
 		$result = $fun->SelectFromTable($query, $query_val);
-
+		
 		$filename = array($_FILES['testi_image']);
 		$upload_file = "";
 		if($_FILES['testi_image']['name'] != ""){
@@ -345,7 +350,7 @@ class my_profile extends template {
 			echo 0;
 		}
 	}
-
+	
 	private function audio_upload(){
 		$fun = new DatabaseFunctions();
         $func = new functions();
@@ -358,11 +363,11 @@ class my_profile extends template {
 		$result = $fun->SelectFromTable($query, $query_val);
 		if($_FILES['audio_file']['name'] != ""){
 			$file_name = $func->upload_simple_files($filename, $uploaddir, 'audio', 'audio');
-
+			
 			$audio_info = $audio_info->Info($uploaddir."".$file_name);
-
+			
 			$audio_description = $fun->EscapeString($_REQUEST['audio_title']);
-
+			
 			$audio_length = $audio_info['playing_time'];
 			$audio_title = $audio_info['tags']['id3v2']['title'][0];
 			$audio_artist = $audio_info['tags']['id3v2']['artist'][0];
@@ -371,7 +376,18 @@ class my_profile extends template {
 			$audio_composer = $audio_info['tags']['id3v2']['composer'][0];
 			$audio_genre = $audio_info['tags']['id3v2']['genre'][0];
 			$audio_band = $audio_info['tags']['id3v2']['band'][0];
-
+			$audio_image = base64_encode($audio_info['comments']['picture'][0]['data']);
+			$audio_image_mime = $audio_info['comments']['picture'][0]['image_mime'];
+			
+			$audio_title_clean = $func->url_slug($audio_title);
+			$query_title = "select audio_title_clean from audios where `audio_title_clean` = ?";
+			$query_val_title = array($audio_title_clean);
+			$result_title = $fun->SelectFromTable($query_title, $query_val_title);
+			if(!empty($result_title)){
+				$audio_title_clean = $audio_title_clean.rand(1,99);
+			}
+			$title_clean_insert = array( 'audio_title_clean' => $audio_title_clean);
+			
 			$insert = array(
 				'audio_file_name' => $file_name,
 				'audio_description' => $audio_description,
@@ -383,8 +399,11 @@ class my_profile extends template {
 				'audio_composer' => $audio_composer,
 				'audio_genre' => $audio_genre,
 				'audio_band' => $audio_band,
+				'audio_image' => $audio_image,
+				'audio_image_mime' => $audio_image_mime,
 				'user_id' => $result[0]['user_id']
 			);
+			$insert = array_merge($insert, $title_clean_insert);
 			$id = $fun->InsertToTable('audios', $insert);
 			if($id){
 				echo 1;
@@ -394,7 +413,7 @@ class my_profile extends template {
 			}
 		}
 	}
-
+	
 	private function video_upload(){
 		$fun = new DatabaseFunctions();
         $func = new functions();
@@ -415,7 +434,7 @@ class my_profile extends template {
 			}
 		}
 	}
-
+	
 	private function image_list_display(){
 		$fun = new DatabaseFunctions();
         $func = new functions();
@@ -425,14 +444,14 @@ class my_profile extends template {
         }
         $pageNumber = $getPage - 1;
         $limit = " LIMIT " . $pageNumber * 12 . " , " . 12;
-		$query = "select
+		$query = "select 
 						img.image_id,
 						img.image,
 						img.image_caption,
 						ad.name
 						from images as img
 						join artist_details as ad
-							on img.user_id = ad.user_id
+							on img.user_id = ad.user_id 
 						where
 							md5(img.user_id) = ?
 							and img.status = ? order by image_id DESC".$limit;
@@ -441,13 +460,13 @@ class my_profile extends template {
 		if(!empty($result)){
 			foreach($result as $key=>$value){
 				?>
-					<div class="box col-xs-4 col-sm-3 col-md-2">
+				
+					<div class="col-xs-4">
 						<div class="thumb">
 							<div class="photo">
 								<a href="#image-<?=$value['image_id']?>" class="square" style="background-size:cover; background-image: url('<?=SITE_PATH."res/uploads/image/".$value['image']?>')">
-									<span class="info"><em class="arrow-right"></em></span>
 								</a>
-								<button class="pl-list__remove remove_assets" data-id="<?=$value['image_id']?>" data-type="image"><span class="fa fa-trash"></span></button>
+								<button class="remove_assets col-xs-12" data-id="<?=$value['image_id']?>" data-type="image"><span class="fa fa-trash"></span></button>
 							</div>
 						</div>
 						<div class="lb-overlay" id="image-<?=$value['image_id']?>">
@@ -455,11 +474,11 @@ class my_profile extends template {
 							<div>
 								<h3><?=$value['name']?></h3>
 								<p><?=$value['image_caption']?></p>
-								<?php
-
+								<?php 
+									
 								?>
-								<a href="#image-10" class="lb-prev">Prev</a>
-								<a href="#image-2" class="lb-next">Next</a>
+								<!--<a href="#image-10" class="lb-prev">Prev</a>
+								<a href="#image-2" class="lb-next">Next</a>-->
 							</div>
 							<a href="#page" class="lb-close">x Close</a>
 						</div>
@@ -471,16 +490,16 @@ class my_profile extends template {
 				}
 			}
 			else{
-				echo '<h4>No Photos Found</h4>';
+				echo '<h6 class="text-center text-red">No Photos Found</h6>';
 			}
 			if(count($result)>11){
 				?>
 				<div class="box col-sm-12 text-center" id="image_<?=($getPage+1)?>">
 					<a class="button color no-bottom load_more" data-type="image" data-page="<?=($getPage+1)?>">Load More Photos</a>
 				</div>
-			<?php }
+			<?php } 
 	}
-
+ 
 	private function testi_list_display(){
 		$fun = new DatabaseFunctions();
         $func = new functions();
@@ -490,7 +509,7 @@ class my_profile extends template {
         }
         $pageNumber = $getPage - 1;
         $limit = " LIMIT " . $pageNumber * 10 . " , " . 10;
-		$query = "select
+		$query = "select 
 						ad.testimonials_id,
 						ad.testimonial,
 						ad.testimonial_reference,
@@ -514,11 +533,11 @@ class my_profile extends template {
 				<?php
 			}
 		}
-		else { ?>
-			<li>No any Testimonials found</li><?php
+		else { 
+		    echo '<h6 class="text-center text-red">No Testimonial Found</h6>';
 		}
 	}
-
+	
 	private function audio_list_display(){
 		$fun = new DatabaseFunctions();
         $func = new functions();
@@ -528,10 +547,13 @@ class my_profile extends template {
         }
         $pageNumber = $getPage - 1;
         $limit = " LIMIT " . $pageNumber * 10 . " , " . 10;
-		$query = "select
+		$query = "select 
 						ad.audio_id,
 						ad.audio_file_name,
 						ad.audio_length,
+						ad.audio_image,
+						ad.audio_image_mime,
+						ad.audio_title_clean,
 						ad.audio_title
 						from  audios as ad
 						where
@@ -542,7 +564,7 @@ class my_profile extends template {
 		if(!empty($result)){
 			foreach($result as $key=>$value){
 				if($value['audio_length'] != ""){
-					$seconds = $value['audio_length'];
+					$seconds = $value['audio_length']; 
 				}
 				else {
 					$seconds = 210;
@@ -550,7 +572,7 @@ class my_profile extends template {
 				$hours = floor($seconds / 3600);
 				$mins = floor($seconds / 60 % 60);
 				$secs = floor($seconds % 60);
-
+				
 				if($hours != 0){
 					$new_length = sprintf('%02d:%02d:%02d',  $hours, $mins, $secs);
 				}
@@ -561,32 +583,43 @@ class my_profile extends template {
 					$value['audio_title'] = "Song";
 				}
 				?>
-				<div class="post-box audio-list horizontal clearfix">
-					<a href="#" data-play="true" data-title="<?=$value['audio_title']?> , <?=SITE_PATH.'res/uploads/audio/'.$value['audio_file_name']?>" class="image-link play-icon">
-					</a>
-					<div class="extra-info">
-						<p class="no-bottom"><?=$value['audio_title']?></p>
-						<p><span class="small">Duration: <?=$new_length?></span></p>
-						<button class="pl-list__remove remove_assets" data-id="<?=$value['audio_id']?>" data-type="audio"><span class="fa fa-trash"></span></button>
+				
+				<div class="col-xs-11 p-x-0">
+					<div class="post-box audio-list horizontal clearfix">
+						<a data-play="true" data-title="<?=$value['audio_title']?>" data-file="<?=SITE_PATH.'res/uploads/audio/'.$value['audio_file_name']?>"  class="image-link play-icon col-xs-4">
+							<?php 
+							if($value['audio_image_mime'] == ""){
+						?>
+								<img src="<?=SITE_PATH?>res/img/audio-album-art.gif" width="150" height="150" alt="">
+							<?php } else {
+								echo ('<img src="data:'.$value['audio_image_mime'].';base64,'.$value['audio_image'].'" width="150" height="150"/>');
+							} ?>
+						</a>
+						<div class="extra-info">
+							<p class="no-bottom"><?=$value['audio_title']?></p>
+							<p><span class="small">Duration: <?=$new_length?></span></p>
+						</div>
 					</div>
 				</div>
+				<a class="remove_assets col-xs-1 no-bottom text-red" data-id="<?=$value['audio_id']?>" data-type="audio"><span class="fa fa-trash"></span></a>
+				<div class="clearfix"></div>
 				<?php
 				if($key == 9){
 					break;
 				}
 			}
 		}
-		else { ?>
-			<li>No any Audios found</li><?php
+		else { 
+			echo '<h6 class="text-center text-red">No Audio Found</h6>';
 		}
 		if(count($result)>9){
 			?>
 			<div class="box col-sm-12 text-center" id="audio_<?=($getPage+1)?>">
 				<a class="button color no-bottom load_more" data-type="audio" data-page="<?=($getPage+1)?>">Load More Audios</a>
 			</div>
-		<?php }
+		<?php } 
 	}
-
+	
 	private function video_list_display(){
 		$fun = new DatabaseFunctions();
         $func = new functions();
@@ -596,7 +629,7 @@ class my_profile extends template {
         }
         $pageNumber = $getPage - 1;
         $limit = " LIMIT " . $pageNumber * 10 . " , " . 10;
-		$query = "select
+		$query = "select 
 						ad.video_id,
 						ad.video_link
 						from  videos as ad
@@ -609,14 +642,16 @@ class my_profile extends template {
 			foreach($videos as $key=>$value){
 				$video_id = explode('/', $value['video_link']);
 				$video_id = end($video_id);
-
+			
 			?>
-				<div class="box col-xs-8 col-sm-7 col-md-6">
+				<div class="col-sm-4 col-md-4">
+					<div class="box clearfix">
 					<?=$video_id?>
 					<div class="video_thumb">
 						<a href="" data-video="<?=$value['video_link']?>"><img src="https://img.youtube.com/vi/<?=$video_id?>/mqdefault.jpg" style="width:100px; height:100px;"/></a>
-						<button class="pl-list__remove remove_assets" data-id="<?=$value['video_id']?>" data-type="video"><span class="fa fa-trash"></span></button>
+						<button class="remove_assets" data-id="<?=$value['video_id']?>" data-type="video"><span class="fa fa-trash"></span></button>
 					</div>
+				</div>
 				</div>
 			<?php
 				if($key == 9){
@@ -625,16 +660,16 @@ class my_profile extends template {
 			}
 		}
 		else{
-			echo '<h4>No Video Found</h4>';
+			echo '<h6 class="text-center text-red">No Video Found</h6>';
 		}
 		if(count($videos)>9){
 			?>
 			<div class="box col-sm-12 text-center" id="video_<?=($getPage+1)?>">
 				<a class="button color no-bottom load_more" data-type="video" data-page="<?=($getPage+1)?>">Load More Videos</a>
 			</div>
-		<?php }
+		<?php } 
 	}
-
+	
 	private function artist_price_insert(){
 		$fun = new DatabaseFunctions();
         $func = new functions();
@@ -669,35 +704,35 @@ class my_profile extends template {
 			}
 		}
 		else{
-			$query = "UPDATE artist_pricing SET
-							pricing_type = ?,
-							price_depand = ?,
-							artist_price = ?,
-							hands = ?,
-							hands_price = ?,
-							supportive = ?,
-							supportive_price = ?,
-							transportation = ?,
-							transportation_price = ?,
-							accommodation = ?,
-							accommodation_price = ?,
-							outstation = ?,
-							outstation_price = ?
+			$query = "UPDATE artist_pricing SET 
+							pricing_type = ?,  
+							price_depand = ?,  
+							artist_price = ?,  
+							hands = ?,  
+							hands_price = ?,  
+							supportive = ?,  
+							supportive_price = ?,  
+							transportation = ?,  
+							transportation_price = ?,  
+							accommodation = ?,  
+							accommodation_price = ?,  
+							outstation = ?,  
+							outstation_price = ?  
 						WHERE  md5(user_id) = ? ";
 			$val_artist = array(
-				'pricing_type' => $fun->EscapeString($_REQUEST['pricing_type']),
-				'price_depand' => $fun->EscapeString($_REQUEST['pricing_format']),
-				'artist_price' => $fun->EscapeString($_REQUEST['pricing']),
-				'hands' => $fun->EscapeString($_REQUEST['hands']),
-				'hands_price' => $fun->EscapeString($_REQUEST['hands_price']),
-				'supportive' => $fun->EscapeString($_REQUEST['supportive']),
-				'supportive_price' => $fun->EscapeString($_REQUEST['supportive_price']),
-				'transportation' => $fun->EscapeString($_REQUEST['transportation']),
-				'transportation_price' => $fun->EscapeString($_REQUEST['transportation_price']),
-				'accommodation' => $fun->EscapeString($_REQUEST['accommodation']),
-				'accommodation_price' => $fun->EscapeString($_REQUEST['accommodation_price']),
-				'outstation' => $fun->EscapeString($_REQUEST['outstation']),
-				'outstation_price' => $fun->EscapeString($_REQUEST['outstation_price']),
+				'pricing_type' => $fun->EscapeString($_REQUEST['pricing_type']), 
+				'price_depand' => $fun->EscapeString($_REQUEST['pricing_format']), 
+				'artist_price' => $fun->EscapeString($_REQUEST['pricing']), 
+				'hands' => $fun->EscapeString($_REQUEST['hands']), 
+				'hands_price' => $fun->EscapeString($_REQUEST['hands_price']), 
+				'supportive' => $fun->EscapeString($_REQUEST['supportive']), 
+				'supportive_price' => $fun->EscapeString($_REQUEST['supportive_price']), 
+				'transportation' => $fun->EscapeString($_REQUEST['transportation']), 
+				'transportation_price' => $fun->EscapeString($_REQUEST['transportation_price']), 
+				'accommodation' => $fun->EscapeString($_REQUEST['accommodation']), 
+				'accommodation_price' => $fun->EscapeString($_REQUEST['accommodation_price']), 
+				'outstation' => $fun->EscapeString($_REQUEST['outstation']), 
+				'outstation_price' => $fun->EscapeString($_REQUEST['outstation_price']), 
 				'user_id' =>$fun->EscapeString($_SESSION[INSTALLATION_KEY . 'user_id'])
 			);
 			$res = $fun->DatabaseQuery($query, $val_artist);
@@ -709,11 +744,11 @@ class my_profile extends template {
 			}
 		}
 	}
-
+	
 	private function artist_price_details(){
 		$fun = new DatabaseFunctions();
         $func = new functions();
-		$query = "select
+		$query = "select 
 						*
 						from artist_pricing as ap
 						where
@@ -722,7 +757,7 @@ class my_profile extends template {
 		$result = $fun->SelectFromTable($query, $query_val);
 		return $result =  json_encode($result[0]);
 	}
-
+	
 	private function delete_assest($cmd, $data_id){
 		$fun = new DatabaseFunctions();
         $func = new functions();

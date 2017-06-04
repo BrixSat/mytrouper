@@ -1,11 +1,11 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title><?=ucfirst(html_entity_decode(SITE_TITLE))?></title>
 <?php
 	$fun = new DatabaseFunctions();
 	$func = new functions();
-	$full_path_url = "" . $func->sanitise_server_uri($_SERVER['REQUEST_URI']);
+	$header_fncn = new header();
+	$full_path_url = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 	$link_array = explode('/', $_SERVER['REQUEST_URI']);
 	$fun = new DatabaseFunctions();
 
@@ -19,35 +19,23 @@
 	}
 
 	$link_array = $link_array_new;
-
+	
+	$header_fncn->meta_tags();// get meta tags
 ?>
-<!-- Facebook Share Start -->
-	<meta property="fb:app_id" content="<?= FB_APP_ID ?>" />
-	<meta property="og:url" content="<?= $full_path_url ?>" />
-	<meta property="og:type" content="website" />
-	<meta property="og:title" content="<?=ucfirst(html_entity_decode(SITE_TITLE))?>" />
-	<meta property="og:description" content="<?=html_entity_decode(SITE_DESC)?>" />
-	<meta property="og:image" content="" />
-	<meta property="og:image:type" content="image/jpeg" />
-	<meta property="og:image:width" content="400" />
-	<meta property="og:image:height" content="300" />
-<!-- Facebook Share End -->
 
-	<meta name="keywords" content="<?=html_entity_decode(SITE_KEYWORDS)?>" />
-	<meta name="description" content="<?=html_entity_decode(SITE_DESC)?>" />
-	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 	<link rel="canonical" href="<?=$full_path_url?>">
-	<link rel="apple-touch-icon" sizes="180x180" href="<?= SITE_PATH ?>/res/img/favicons/apple-touch-icon.png">
-	<link rel="icon" type="image/png" sizes="32x32" href="<?= SITE_PATH ?>/res/img/favicons/favicon-32x32.png">
-	<link rel="icon" type="image/png" sizes="16x16" href="<?= SITE_PATH ?>/res/img/favicons/favicon-16x16.png">
-	<link rel="manifest" href="<?= SITE_PATH ?>/res/img/favicons/manifest.json">
-	<link rel="mask-icon" href="<?= SITE_PATH ?>/res/img/favicons/safari-pinned-tab.svg" color="#5bbad5">
-	<meta name="theme-color" content="#ffffff">
+	<link rel="apple-touch-icon" sizes="180x180" href="<?= SITE_PATH ?>res/img/favicons/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="<?= SITE_PATH ?>res/img/favicons/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="<?= SITE_PATH ?>res/img/favicons/favicon-16x16.png">
+	<link rel="manifest" href="<?= SITE_PATH ?>res/img/favicons/manifest.json">
+	<link rel="mask-icon" href="<?= SITE_PATH ?>res/img/favicons/safari-pinned-tab.svg" color="#5bbad5">
+	<meta name="theme-color" content="#ffffff"/>
 	<link href="https://fonts.googleapis.com/css?family=Roboto:400,700%7CDroid+Serif" rel="stylesheet" type="text/css">
 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 	<link href="<?= SITE_PATH ?>res/css/combine-style.min.css" rel="stylesheet" type="text/css">
 	<script type="text/javascript" src="<?= SITE_PATH ?>res/js/jquery.min.js"></script>
 	<script type="text/javascript" src="<?= SITE_PATH ?>res/js/site.js"></script>
+	<script src="https://apis.google.com/js/platform.js" async defer></script>
 </head>
 <body>
 	<header id="top" class="navbar" role="banner">
@@ -55,7 +43,7 @@
 			<div class="inner">
 
 				<div class="site-title">
-					<h1><a href="index.html"><img src="<?=SITE_PATH?>res/img/logo.png" width="100" height="52" alt="Exa"></a><a id="bookmark-this" href="#" title="Bookmark MyTrouper"><i class="fa fa-heart ld ld-heartbeat text-red" alt="bookmark" title="Bookmark MyTrouper"></i></a></h1>
+					<h1 class="clearfix"><a href="<?= SITE_PATH ?>"><img src="<?=SITE_PATH?>res/img/favicons/apple-touch-icon.png" width="90" height="90" alt="My Trouper, Online Artist Booking Platform" title="My Trouper, Online Artist Booking Platform"></a><a id="bookmark-this" href="#" title="Bookmark MyTrouper"><i class="fa fa-heart ld ld-heartbeat text-red" alt="bookmark" title="Bookmark MyTrouper"></i></a></h1>
 					<a href="#site-menu" class="site-menu-toggle">
 						<span class="sr-only">Toggle navigation</span>
 						<em class="first"></em><em class="middle"></em><em class="last"></em>
@@ -146,7 +134,7 @@
 								<?php
 									if(!empty($_SESSION['eeeprofile_id'])){
 								?>
-									<a href="<?=SITE_PATH?>my-profile">Profile</a>
+									<a href="<?=SITE_PATH?>profile/<?=$_SESSION['eeeprofile_id']?>">Profile</a>
 								<?php
 									}
 									else {
@@ -160,7 +148,7 @@
 								?>
 								<ul>
 									<li>
-										<a href="<?=SITE_PATH?>my-profile">My Profile</a>
+										<a href="<?=SITE_PATH?>my-profile">Edit Profile</a>
 										<a href="<?=SITE_PATH?>logout">Logout</a>
 									</li>
 								</ul>

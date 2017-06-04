@@ -12,7 +12,7 @@
 	$profile_obj = new profile();
 	$profile = json_decode($profile_obj->handleAction('profile', $final_array[0]));
 	$testimonials = json_decode($profile_obj->handleAction('testimonials', $profile->user_id));
-	if(empty($profile)){
+	if($profile->name == ""){
 		$not_found = new not_found();
 		$not_found->handlePage();die;
 	}
@@ -24,18 +24,21 @@
 	<div class="container">
 		<div class="inner">
 			<div class="row">
-			<div class="col-sm-7">
+			<div class="col-sm-7" itemscope itemtype="http://schema.org/Person">
+			    <!-- Go to www.addthis.com/dashboard to customize your tools --> <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5910d0571fdde1d3"></script>
+			    <!-- Go to www.addthis.com/dashboard to customize your tools --> <div class="addthis_inline_share_toolbox"></div>
 				<div class="team-member no-left col-xs-12 p-x-0">
 					<span class="team-photo col-xs-8 col-sm-12 p-x-0">
 						<img src="<?=$profile->image?>" width="340" height="340" alt="<?=$profile->name?> at My Trouper" titile="<?=$profile->name?> at My Trouper">
 					</span>
 					<div class="col-xs-4 hidden visible-xs text-right p-x-0">
 						<div class="margin-3"></div>
-						<iframe src="https://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.mytrouper.com<?= $_SERVER['REQUEST_URI'] ?>&width=63&layout=box_count&action=like&size=large&show_faces=false&share=true&height=65&appId=279347922476477" width="63" height="100" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true"></iframe>
+						 
+						
 					</div>
 				</div>
 				<div class="margin-3 hidden-xs"></div>
-				<h4 class="no-bottom"><?=$profile->name?></h4>
+				<h4 class="no-bottom" itemprop="name"><?=$profile->name?></h4>
 				<h6 class="no-bottom"><?=$profile->categories?></h6>
 				<p class="no-bottom small"><?=$profile->hometown?></p>
 				<h6>
@@ -78,8 +81,8 @@
 							<?php 	}
 									else {?>
 									<div class="testimonial-item">
-										<p><?=$value->testimonial?></p>
-										<em class="name">- <?=$value->testimonial_reference?></em>
+										<p><?=htmlentities($value->testimonial)?></p>
+										<em class="name">- <?=htmlentities($value->testimonial_reference)?></em>
 									</div>
 						<?php 		}
 								}
@@ -92,23 +95,34 @@
 		</div>
 		<div class="image-background-section" style="background-color: #eef4f7; background-image: url(<?=$profile->cover_photo?>)">
 
-			<div class="" style="background-image: url(<?=SITE_PATH?>res/img/bg-dots.png)">
-				<div id="eventCalendarDefault" class="calendar-horizontal">
+			<div class="">
+				<!--<div id="eventCalendarDefault" class="calendar-horizontal">
 					<div class="margin-4"></div>
 					<div class="col-sm-8 col-sm-offset-2 transparent-bg">
 						<div class="margin-3"></div>
-						<div class='eventCalendar-list-wrap'><p class='eventCalendar-subtitle'></p>
+					    <div class='eventCalendar-list-wrap'><p class='eventCalendar-subtitle'></p>
 							<div class='eventCalendar-list-content'><ul class='eventCalendar-list'></ul></div>
 						</div>
 						<blockquote class="bio">
 
-							<p><?=$profile->bio?></p>
+							<p><?=htmlentities($profile->bio)?></p>
 						</blockquote>
-							<div class="margin-3"></div>
+						<div class="margin-3"></div>
 					</div>
 					<div class="clear"></div>
 					<div class="margin-4"></div>
-			</div>
+			    </div>-->
+			    <div class="margin-4"></div>
+				<div class="col-sm-8 col-sm-offset-2 transparent-bg">
+					<div class="margin-3"></div>
+					<blockquote class="bio">
+
+						<p><?=htmlentities($profile->bio)?></p>
+					</blockquote>
+					<div class="margin-3"></div>
+				</div>
+				<div class="clear"></div>
+				<div class="margin-4"></div>
 
 			</div>
 	</div>
@@ -128,15 +142,15 @@
 
 						</div>
 					</div>
-					<div id="tab-5" class="tab_content" <?php if($profile->tot_audio == 0 and $profile->tot_video != 0){?>style="display: block;"<?php } else{ ?>style="display: none;"<?php } ?>>
+					<div id="tab-5" class="tab_content container-masonry" <?php if($profile->tot_audio == 0 and $profile->tot_video != 0){?>style="display: block;"<?php } else{ ?>style="display: none;"<?php } ?>>
 						<h4>Videos</h4>
-						<div class="col-sm-6 col-md-6 video_section">
+						<div class="row video_section">
 
 						</div>
 					</div>
 					<div id="tab-6" class="tab_content container-masonry" <?php if($profile->tot_audio == 0 and $profile->tot_video == 0 and $profile->tot_image != 0){?>style="display: block;"<?php } else{ ?>style="display: none;"<?php } ?>>
 						<!-- NOTE: gallery starts -->
-						<p><h4>Photo Gallery</h4>
+						<h4>Photo Gallery</h4>
 						<section class="row photo_section">
 
 						</section>
@@ -192,7 +206,7 @@
 		$.ajax({
 			type: "POST",
 			url: "<?=SITE_PATH?>profile/<?=$final_array[0]?>?action=loadAssests",
-			data: {'user_id' : <?=$final_array[0]?>, 'page' : page, 'cmd' :cmd},
+			data: {'user_id' : <?=$profile->profile_id?>, 'page' : page, 'cmd' :cmd},
 			cache: false,
 			async: false,
 			success: function(data) {
@@ -206,21 +220,21 @@
 			}
 		});
 	}
-	$(document).ready(function() {
-		$("#eventCalendarDefault").eventCalendar({
-			eventsjson: '<?=SITE_PATH?>res/json/events.json.php',
-		showDayAsWeeks: false,
-			locales: {
-				txt_next: '<i class="fa fa-arrow-right"></i>',
-				txt_prev: '<i class="fa fa-arrow-left"></i>',
-				txt_SpecificEvents_prev:"",
-				txt_SpecificEvents_after:"events:",
-				txt_noEvents: "There are no events in this period",
-				txt_NextEvents: "Next events:",
-				txt_GoToEventUrl: "See the event",
-				txt_loading: "loading..."
-			}
-		});
-		$("#eventCalendarDefault").find(".eventCalendar-list-wrap")[1].remove();
-	});
+// 	$(document).ready(function() {
+// 		$("#eventCalendarDefault").eventCalendar({
+// 			eventsjson: '<?=SITE_PATH?>res/json/events.json.php',
+// 		showDayAsWeeks: false,
+// 			locales: {
+// 				txt_next: '<i class="fa fa-arrow-right"></i>',
+// 				txt_prev: '<i class="fa fa-arrow-left"></i>',
+// 				txt_SpecificEvents_prev:"",
+// 				txt_SpecificEvents_after:"events:",
+// 				txt_noEvents: "There are no events in this period",
+// 				txt_NextEvents: "Next events:",
+// 				txt_GoToEventUrl: "See the event",
+// 				txt_loading: "loading..."
+// 			}
+// 		});
+// 		$("#eventCalendarDefault").find(".eventCalendar-list-wrap")[1].remove();
+// 	});
 </script>
